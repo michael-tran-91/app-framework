@@ -32,6 +32,7 @@ class Controller():
     def add_child(self, child : Controller):
         self.childrens.append(child)
         child.parent = self
+        return child
 
     def remove_child(self, child : Controller):
         if child in self.childrens:
@@ -41,11 +42,8 @@ class Controller():
             self.childrens.remove(child)            
 
     def remove_childrens(self):
-        for child in self.childrens:
-            child.on_shutdown()
-            child.remove_childrens()
-            child.parent = None
-        self.childrens.clear()
+        while self.childrens:
+            self.remove_child(self.childrens[0])
 
     def remove_self(self):
         if self.parent:

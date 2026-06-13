@@ -1,0 +1,35 @@
+from core.controller.controller import Controller
+from PySide6.QtWidgets import QLayout, QWidget
+
+class WidgetController(Controller):
+    def __init__(self, layout: QLayout | None = None, widget: QWidget | None = None):
+        super().__init__()
+        self.layout = layout
+        self.widget = widget if widget is not None else QWidget()
+        if layout:
+            self.widget.setLayout(layout)
+            layout.setContentsMargins(0, 0, 0, 0)
+            layout.setSpacing(0)
+
+    def add_child(self, child : Controller):
+        super().add_child(child)
+        if isinstance(child, WidgetController) and self.layout:
+            self.layout.addWidget(child.widget)
+        return child
+
+    def remove_child(self, child : Controller):
+        if isinstance(child, WidgetController) and self.layout:
+            self.layout.removeWidget(child.widget)
+
+        super().remove_child(child)
+
+#---------------------------------------------------------------------------
+# private method
+#---------------------------------------------------------------------------
+    def _on_shutdown(self):
+        if self.widget:
+            self.widget.deleteLater()
+        if self.layout:
+            self.layout.deleteLater()
+
+        super()._on_shutdown()
