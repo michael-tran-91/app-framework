@@ -18,11 +18,39 @@ else:
     except Exception:
         pass
 
-def _fetch_app(path: str):
-    pass
+def fetch(path: str, encoding = None):
+    """Fetch a file using pseudo-URL schemes:
 
-def _fetch_bundle(path: str):
-    pass
+    - app://path/to/file  -> read from the application bundle directory (`bundle_dir`)
+    - local://path/to/file -> read from the user application data directory (`app_data_dir`)
+    - otherwise -> treat as a filesystem path; relative paths are resolved against `bundle_dir` if available
 
-def fetch(path: str):
-    pass
+    Returns bytes by default.
+    """
+    if not path:
+        raise ValueError('empty path')
+
+    # Determine target Path
+    if path.startswith('app://'):
+        rel = path[len('app://'):].lstrip('/')
+        base = bundle_dir or Path(__file__).resolve().parent.parent
+        target = base.joinpath(rel)
+    elif path.startswith('local://'):
+        rel = path[len('local://'):].lstrip('/')
+        target = app_data_dir.joinpath(rel)
+    else:
+        p = Path(path)
+        if not p.is_absolute():
+            base = bundle_dir or Path(__file__).resolve().parent.parent
+            target = base.joinpath(path)
+        else:
+            target = p
+
+    if not target.exists():
+        raise FileNotFoundError(f'File not found: {target}')
+
+    # Return bytes by default; callers can decode if they need text
+    if encoding:
+        return target.read_text(encoding)
+    
+    return target.read_bytes()
