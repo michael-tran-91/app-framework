@@ -55,6 +55,7 @@ def main():
 	btn = a.add_child(ButtonController())
 	btn.widget.setFixedSize(200, 40)
 	btn = a.add_child(ToggleController())
+	btn.widget.setObjectName("toggle_theme")
 	btn.widget.setFixedSize(60, 30)
 	light_dark_toggle = btn
 	a = shadow.add_child(WidgetController(layout=QHBoxLayout()))

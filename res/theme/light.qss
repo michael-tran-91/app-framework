@@ -20,6 +20,13 @@ QLabel {
 	qproperty-offColor: #d0d0d0;
 }
 
+#toggle_theme {
+	qproperty-onColor: #4caf50;
+	qproperty-offColor: #d0d0d0;
+	qproperty-checkedImage: 'app://res/icon/dark_mode.png';
+	qproperty-uncheckedImage: 'app://res/icon/light_mode.png';
+}
+
 QPushButton#Button {
     background-color: #3498db;   /* blue background */
     color: white;                /* white text */

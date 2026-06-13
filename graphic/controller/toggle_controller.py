@@ -1,28 +1,34 @@
 from .widget_controller import WidgetController
-from PySide6.QtWidgets import QSizePolicy
-from PySide6.QtCore import Qt
-
-from PySide6.QtWidgets import QWidget
+from PySide6.QtWidgets import QSizePolicy, QWidget
 from PySide6.QtCore import Qt, QRectF, Property, QPropertyAnimation, Signal, QSize
-from PySide6.QtGui import QPainter, QColor
+from PySide6.QtGui import QPainter, QColor, QPixmap
+
 
 class AnimatedToggle(QWidget):
     toggled = Signal(bool)
 
     def __init__(self, parent=None, thumb_margin=3, checked_position="right"):
-        """
-        checked_position: "right" or "left"
-        """
+        """checked_position: "right" or "left""" 
         super().__init__(parent)
         self._checked = False
-        self._offset = 0.0                 # animation parameter 0.0..1.0
+        self._offset = 0.0  # animation parameter 0.0..1.0
         # Use a custom property name to avoid clashing with QWidget.pos()
         self._anim = QPropertyAnimation(self, b"offset", self)
         self._anim.setDuration(160)
         self._thumb_margin = thumb_margin
+
         # default colors (can be overridden by QSS using qproperty-onColor / qproperty-offColor)
         self._on_color = QColor("#4caf50")
         self._off_color = QColor("#d0d0d0")
+
+        # optional images (can be set via qproperty-checkedImage / qproperty-uncheckedImage)
+        self._checked_image_path = None
+        self._unchecked_image_path = None
+        self._checked_pix = QPixmap()
+        self._unchecked_pix = QPixmap()
+        self._checked_pix_scaled = QPixmap()
+        self._unchecked_pix_scaled = QPixmap()
+
         self.setCursor(Qt.PointingHandCursor)
 
         if checked_position not in ("right", "left"):
@@ -71,6 +77,15 @@ class AnimatedToggle(QWidget):
         painter.setBrush(QColor("white"))
         painter.drawEllipse(thumb_rect)
 
+        # draw optional icon centered in the thumb
+        painter.setRenderHint(QPainter.SmoothPixmapTransform)
+        pix = self._checked_pix_scaled if self._checked else self._unchecked_pix_scaled
+        if not pix.isNull():
+            pw, ph = pix.width(), pix.height()            
+            x0 = thumb_rect.x() + (thumb_d - pw) / 2.0
+            y0 = thumb_rect.y() + (thumb_d - ph) / 2.0
+            painter.drawPixmap(int(x0), int(y0), pix)
+
     # Animated property (use a unique name 'offset' to avoid QWidget.pos conflict)
     def getOffset(self):
         return self._offset
@@ -106,6 +121,77 @@ class AnimatedToggle(QWidget):
         self.update()
 
     offColor = Property(QColor, getOffColor, setOffColor)
+
+    # Image helpers and QSS-settable properties
+    def _load_pixmap_from_path(self, path):
+        pix = QPixmap()
+        if not path:
+            return pix
+        # accept already-loaded QPixmap
+        if isinstance(path, QPixmap):
+            return path
+        s = str(path).strip()
+        try:
+            if s.startswith('app://') or s.startswith('local://'):
+                # lazy import to avoid cycles
+                try:
+                    from util.file_manager import fetch as fetch_file_content
+                except Exception:
+                    fetch_file_content = None
+                if fetch_file_content:
+                    try:
+                        data = fetch_file_content(s)
+                        if isinstance(data, str):
+                            data = data.encode('utf-8')
+                        pix.loadFromData(data)
+                    except Exception as e:
+                        print('Warning: failed to load image from', s, e)
+                else:
+                    print('Warning: file fetch helper not available to load', s)
+            else:
+                if not pix.load(s):
+                    # warn if missing
+                    print(f'Warning: QPixmap failed to load "{s}"')
+        except Exception as e:
+            print('Warning: error loading pixmap', e)
+        return pix
+
+    def _rescale_pixmaps(self):
+        thumb_d = max(2, int(self.height() - 2 * self._thumb_margin))
+        if not self._checked_pix.isNull():
+            self._checked_pix_scaled = self._checked_pix.scaled(thumb_d, thumb_d, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        else:
+            self._checked_pix_scaled = QPixmap()
+        if not self._unchecked_pix.isNull():
+            self._unchecked_pix_scaled = self._unchecked_pix.scaled(thumb_d, thumb_d, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        else:
+            self._unchecked_pix_scaled = QPixmap()
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self._rescale_pixmaps()
+
+    def getCheckedImage(self):
+        return self._checked_image_path or ""
+
+    def setCheckedImage(self, path):
+        self._checked_image_path = str(path) if path is not None else None
+        self._checked_pix = self._load_pixmap_from_path(self._checked_image_path)
+        self._rescale_pixmaps()
+        self.update()
+
+    checkedImage = Property(str, getCheckedImage, setCheckedImage)
+
+    def getUncheckedImage(self):
+        return self._unchecked_image_path or ""
+
+    def setUncheckedImage(self, path):
+        self._unchecked_image_path = str(path) if path is not None else None
+        self._unchecked_pix = self._load_pixmap_from_path(self._unchecked_image_path)
+        self._rescale_pixmaps()
+        self.update()
+
+    uncheckedImage = Property(str, getUncheckedImage, setUncheckedImage)
 
     # State management
     def isChecked(self):
@@ -146,6 +232,7 @@ class AnimatedToggle(QWidget):
         w = int(h * 2)
         return QSize(w, h)
 
+
 class ToggleController(WidgetController):
 
     def __init__(self):
@@ -157,8 +244,6 @@ class ToggleController(WidgetController):
 
     def _toggled(self, checked):
         self.bubble_event({
-            "type" : "toggle_controller_clicked",
-            "data" : {
-                "checked" : checked
-            }
+            "type": "toggle_controller_clicked",
+            "data": {"checked": checked},
         })
