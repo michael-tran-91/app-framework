@@ -1,6 +1,7 @@
 from .widget_controller import WidgetController
 from PySide6.QtWidgets import QLayout, QSizePolicy, QStackedLayout, QFrame, QVBoxLayout, QHBoxLayout, QWidget
 from enum import Enum
+from PySide6.QtCore import Qt
 
 class ShadowEdgeController(WidgetController):
 
@@ -47,6 +48,8 @@ class ShadowEdgeController(WidgetController):
 
         # if direction is top: create vertical layout, add qframe with fixed height and stretch remaining. add layout to stack
         edge = QFrame()
+        edge.setAttribute(Qt.WA_TransparentForMouseEvents, True)
+
         self._edges[direction] = edge
         if direction == self.TOP:
             edge.setObjectName("shadow_edge_top")
@@ -55,6 +58,7 @@ class ShadowEdgeController(WidgetController):
             layout.setContentsMargins(0, 0, 0, 0)
             layout.setSpacing(0)
             layout_widget = QWidget()
+            layout_widget.setAttribute(Qt.WA_TransparentForMouseEvents, True)
             layout_widget.setLayout(layout)
             layout_widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
             layout.addWidget(edge)
@@ -67,6 +71,7 @@ class ShadowEdgeController(WidgetController):
             layout.setContentsMargins(0, 0, 0, 0)
             layout.setSpacing(0)            
             layout_widget = QWidget()
+            layout_widget.setAttribute(Qt.WA_TransparentForMouseEvents, True)
             layout_widget.setLayout(layout)
             layout_widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
             layout.addStretch()
@@ -79,6 +84,7 @@ class ShadowEdgeController(WidgetController):
             layout.setContentsMargins(0, 0, 0, 0)
             layout.setSpacing(0)            
             layout_widget = QWidget()
+            layout_widget.setAttribute(Qt.WA_TransparentForMouseEvents, True)
             layout_widget.setLayout(layout)
             layout_widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
             layout.addStretch()
@@ -91,6 +97,7 @@ class ShadowEdgeController(WidgetController):
             layout.setContentsMargins(0, 0, 0, 0)
             layout.setSpacing(0)
             layout_widget = QWidget()
+            layout_widget.setAttribute(Qt.WA_TransparentForMouseEvents, True)
             layout_widget.setLayout(layout)
             layout_widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
             layout.addWidget(edge)

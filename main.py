@@ -6,6 +6,7 @@ from graphic.controller.widget_controller import WidgetController
 from graphic.controller.shadow_edge_controller import ShadowEdgeController
 from graphic.controller.stacked_controller import StackedController
 from graphic.controller.splitter_controller import SplitterController
+from graphic.controller.button_controller import ButtonController
 from PySide6.QtCore import Qt
 
 light_styleSheet = """
@@ -16,6 +17,25 @@ QWidget#test_widget {
 QWidget#test_widget2 {
 	background-color: #f3f4f6;
 	border: none;
+}
+
+QPushButton {
+    background-color: #3498db;   /* blue background */
+    color: white;                /* white text */
+    font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 2px solid #3498db;
+}
+
+QPushButton:hover {
+    background-color: #2980b9;   /* darker blue on hover */
+	border: 2px solid #2980b9;
+}
+
+QPushButton:pressed {
+    background-color: #1c5980;   /* even darker when pressed */
+	border: 2px solid #1c5980;
 }
 
 QFrame#shadow_edge_top {
@@ -101,6 +121,9 @@ def main():
 	shadow.enable_edge(ShadowEdgeController.TOP | ShadowEdgeController.RIGHT | ShadowEdgeController.BOTTOM | ShadowEdgeController.LEFT)
 	a = shadow.add_child(WidgetController(layout=QVBoxLayout()))
 	a.widget.setObjectName("test_widget2")
+	btn = a.add_child(ButtonController())
+	btn.widget.setFixedSize(200, 40)
+
 	splitter.widget.resize(400, 300)
 	splitter.widget.show()
 	sys.exit(app.exec())
