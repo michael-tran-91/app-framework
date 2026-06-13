@@ -1,5 +1,5 @@
 from core.controller.controller import Controller
-from PySide6.QtWidgets import QLayout, QWidget
+from PySide6.QtWidgets import QLayout, QSizePolicy, QWidget
 
 class WidgetController(Controller):
     def __init__(self, layout: QLayout | None = None, widget: QWidget | None = None):
@@ -10,6 +10,7 @@ class WidgetController(Controller):
             self._widget.setLayout(layout)
             layout.setContentsMargins(0, 0, 0, 0)
             layout.setSpacing(0)
+        self._widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
 #---------------------------------------------------------------------------
 # property
