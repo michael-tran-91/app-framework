@@ -22,6 +22,9 @@ class AnimatedToggle(QWidget):
         self._anim = QPropertyAnimation(self, b"offset", self)
         self._anim.setDuration(160)
         self._thumb_margin = thumb_margin
+        # default colors (can be overridden by QSS using qproperty-onColor / qproperty-offColor)
+        self._on_color = QColor("#4caf50")
+        self._off_color = QColor("#d0d0d0")
         self.setCursor(Qt.PointingHandCursor)
 
         if checked_position not in ("right", "left"):
@@ -47,10 +50,8 @@ class AnimatedToggle(QWidget):
         w, h = self.width(), self.height()
         radius = h / 2.0
 
-        # track color
-        on_color = QColor("#4caf50")
-        off_color = QColor("#d0d0d0")
-        track_color = on_color if self._checked else off_color
+        # track color (read from properties so QSS can override via qproperty-...)
+        track_color = self._on_color if self._checked else self._off_color
 
         # draw track
         track_rect = QRectF(0, 0, w, h)
@@ -81,6 +82,32 @@ class AnimatedToggle(QWidget):
         self.update()
 
     offset = Property(float, getOffset, setOffset)
+
+    # Color properties exposed to QSS via `qproperty-<name>`
+    def getOnColor(self):
+        return self._on_color
+
+    def setOnColor(self, c):
+        # accept QColor or color string
+        if isinstance(c, QColor):
+            self._on_color = c
+        else:
+            self._on_color = QColor(str(c))
+        self.update()
+
+    onColor = Property(QColor, getOnColor, setOnColor)
+
+    def getOffColor(self):
+        return self._off_color
+
+    def setOffColor(self, c):
+        if isinstance(c, QColor):
+            self._off_color = c
+        else:
+            self._off_color = QColor(str(c))
+        self.update()
+
+    offColor = Property(QColor, getOffColor, setOffColor)
 
     # State management
     def isChecked(self):

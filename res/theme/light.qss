@@ -7,6 +7,11 @@ QWidget#test_widget2 {
 	border: none;
 }
 
+#Toggle {
+	qproperty-onColor: #4c63af;
+	qproperty-offColor: #d0d0d0;
+}
+
 QPushButton#Button {
     background-color: #3498db;   /* blue background */
     color: white;                /* white text */
