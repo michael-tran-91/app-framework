@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QSizePolicy, QPushButton
 from PySide6.QtCore import Qt
 
 from PySide6.QtWidgets import QWidget, QApplication, QHBoxLayout, QLabel
-from PySide6.QtCore import Qt, QRectF, Property, QPropertyAnimation, Signal
+from PySide6.QtCore import Qt, QRectF, Property, QPropertyAnimation, Signal, QSize
 from PySide6.QtGui import QPainter, QColor, QFont
 import sys
 
@@ -17,13 +17,13 @@ class AnimatedToggle(QWidget):
         """
         super().__init__(parent)
         self._checked = False
-        self._pos = 0.0                 # animation parameter 0.0..1.0
-        self._anim = QPropertyAnimation(self, b"pos", self)
+        self._offset = 0.0                 # animation parameter 0.0..1.0
+        # Use a custom property name to avoid clashing with QWidget.pos()
+        self._anim = QPropertyAnimation(self, b"offset", self)
         self._anim.setDuration(160)
         self._thumb_margin = thumb_margin
         self.setCursor(Qt.PointingHandCursor)
 
-        # checked_position controls which side corresponds to checked state
         if checked_position not in ("right", "left"):
             raise ValueError("checked_position must be 'right' or 'left'")
         self.checked_position = checked_position
@@ -63,26 +63,24 @@ class AnimatedToggle(QWidget):
         x_min = self._thumb_margin
         x_max = w - self._thumb_margin - thumb_d
 
-        # If checked_position == "right": pos 0 -> left, pos 1 -> right
-        # If checked_position == "left": pos 0 -> right, pos 1 -> left (inverted)
         if self.checked_position == "right":
-            x = x_min + (x_max - x_min) * self._pos
+            x = x_min + (x_max - x_min) * self._offset
         else:
-            x = x_max - (x_max - x_min) * self._pos
+            x = x_max - (x_max - x_min) * self._offset
 
         thumb_rect = QRectF(x, self._thumb_margin, thumb_d, thumb_d)
         painter.setBrush(QColor("white"))
         painter.drawEllipse(thumb_rect)
 
-    # Animated property
-    def getPos(self):
-        return self._pos
+    # Animated property (use a unique name 'offset' to avoid QWidget.pos conflict)
+    def getOffset(self):
+        return self._offset
 
-    def setPos(self, v):
-        self._pos = float(v)
+    def setOffset(self, v):
+        self._offset = float(v)
         self.update()
 
-    pos = Property(float, getPos, setPos)
+    offset = Property(float, getOffset, setOffset)
 
     # State management
     def isChecked(self):
@@ -93,7 +91,7 @@ class AnimatedToggle(QWidget):
             return
         self._checked = checked
 
-        start = self._pos
+        start = self._offset
         end = 1.0 if checked else 0.0
 
         if animate:
@@ -102,16 +100,26 @@ class AnimatedToggle(QWidget):
             self._anim.setEndValue(end)
             self._anim.start()
         else:
-            self.setPos(end)
+            self.setOffset(end)
 
         self.toggled.emit(checked)
+        # Ensure layout systems recalc stable geometry after state change
+        self.updateGeometry()
 
     def toggle(self):
         self.setChecked(not self._checked)
 
     # convenience
     def sizeHint(self):
-        return self.size()
+        # Provide a stable preferred size so layouts don't collapse on interaction
+        h = max(16, self.fontMetrics().height() + 8)
+        w = int(h * 2.2)
+        return QSize(w, h)
+
+    def minimumSizeHint(self):
+        h = 12
+        w = int(h * 2)
+        return QSize(w, h)
 
 class ToggleController(WidgetController):
 

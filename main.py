@@ -40,7 +40,7 @@ def main():
 	btn = a.add_child(ButtonController())
 	btn.widget.setFixedSize(200, 40)
 	btn = a.add_child(ToggleController())
-	btn.widget.setFixedSize(200, 40)
+	btn.widget.setFixedSize(80, 40)
 
 	splitter.widget.resize(400, 300)
 	splitter.widget.show()
