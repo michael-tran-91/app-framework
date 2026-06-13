@@ -5,4 +5,5 @@ class LabelController(WidgetController):
 
     def __init__(self, text: str | None = None):
         super().__init__(layout=None, widget=QLabel())
+        self.widget.setWordWrap(True)
         self.widget.setText(text)
