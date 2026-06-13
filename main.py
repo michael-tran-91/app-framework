@@ -7,6 +7,7 @@ from graphic.controller.shadow_edge_controller import ShadowEdgeController
 from graphic.controller.stacked_controller import StackedController
 from graphic.controller.splitter_controller import SplitterController
 from graphic.controller.button_controller import ButtonController
+from graphic.controller.toggle_controller import ToggleController
 from PySide6.QtCore import Qt
 from util.file_manager import fetch as fetch_file_content
 
@@ -37,6 +38,8 @@ def main():
 	a = shadow.add_child(WidgetController(layout=QVBoxLayout()))
 	a.widget.setObjectName("test_widget2")
 	btn = a.add_child(ButtonController())
+	btn.widget.setFixedSize(200, 40)
+	btn = a.add_child(ToggleController())
 	btn.widget.setFixedSize(200, 40)
 
 	splitter.widget.resize(400, 300)

@@ -7,7 +7,7 @@ QWidget#test_widget2 {
 	border: none;
 }
 
-QPushButton {
+QPushButton#Button {
     background-color: #3498db;   /* blue background */
     color: white;                /* white text */
     font-size: 14px;
@@ -16,12 +16,12 @@ QPushButton {
     border: 2px solid #3498db;
 }
 
-QPushButton:hover {
+QPushButton#Button:hover {
     background-color: #2980b9;   /* darker blue on hover */
 	border: 2px solid #2980b9;
 }
 
-QPushButton:pressed {
+QPushButton#Button:pressed {
     background-color: #1c5980;   /* even darker when pressed */
 	border: 2px solid #1c5980;
 }
