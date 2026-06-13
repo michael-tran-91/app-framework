@@ -4,13 +4,27 @@ from PySide6.QtWidgets import QLayout, QWidget
 class WidgetController(Controller):
     def __init__(self, layout: QLayout | None = None, widget: QWidget | None = None):
         super().__init__()
-        self.layout = layout
-        self.widget = widget if widget is not None else QWidget()
+        self._layout = layout
+        self._widget = widget if widget is not None else QWidget()
         if layout:
-            self.widget.setLayout(layout)
+            self._widget.setLayout(layout)
             layout.setContentsMargins(0, 0, 0, 0)
             layout.setSpacing(0)
 
+#---------------------------------------------------------------------------
+# property
+#---------------------------------------------------------------------------
+    @property
+    def layout(self):
+        return self._layout
+    
+    @property
+    def widget(self):
+        return self._widget
+
+#---------------------------------------------------------------------------
+# public method | tree structure
+#---------------------------------------------------------------------------
     def add_child(self, child : Controller):
         super().add_child(child)
         if isinstance(child, WidgetController) and self.layout:
@@ -27,9 +41,9 @@ class WidgetController(Controller):
 # private method
 #---------------------------------------------------------------------------
     def _on_shutdown(self):
-        if self.widget:
-            self.widget.deleteLater()
-        if self.layout:
-            self.layout.deleteLater()
+        if self._widget:
+            self._widget.deleteLater()
+        if self._layout:
+            self._layout.deleteLater()
 
         super()._on_shutdown()
