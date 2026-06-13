@@ -114,7 +114,7 @@ class Controller():
 # private method | event dispatch
 #---------------------------------------------------------------------------
     def _handle_event(self, event):
-        if not self._in_event_context(event):
+        if not self.in_event_context(event):
             return False
         
         handlers = self.event_handlers.get(event["type"], [])
@@ -126,7 +126,7 @@ class Controller():
 #---------------------------------------------------------------------------
 # private method | paticipate int event context
 #---------------------------------------------------------------------------
-    def _in_event_context(self, event):
+    def in_event_context(self, event):
         ctrl_ids = event.get("context", {}).get("controller", set())
         return id(self) in ctrl_ids
     

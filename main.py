@@ -19,12 +19,17 @@ def main():
 	app = QApplication(sys.argv)
 	app.setStyleSheet(light_styleSheet)
 
+	light_dark_toggle = None
+
 	def test_handle(event):
-		if event["data"]["checked"]:
-			app.setStyleSheet(dark_styleSheet)
-		else:
-			app.setStyleSheet(light_styleSheet)
-		return True
+		if light_dark_toggle.in_event_context(event):
+			if event["data"]["checked"]:
+				app.setStyleSheet(dark_styleSheet)
+			else:
+				app.setStyleSheet(light_styleSheet)
+			return True
+		
+		return False
 
 	root_ctrl = RootController()
 	root_ctrl.register_event_handler("toggle_controller_clicked", test_handle)
@@ -50,6 +55,7 @@ def main():
 	btn.widget.setFixedSize(200, 40)
 	btn = a.add_child(ToggleController())
 	btn.widget.setFixedSize(60, 30)
+	light_dark_toggle = btn
 
 	splitter.widget.resize(400, 300)
 	splitter.widget.show()
