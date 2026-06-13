@@ -26,9 +26,9 @@ def main():
 	def test_handle(event):
 		if light_dark_toggle.in_event_context(event):
 			if event["data"]["checked"]:
-				app.setStyleSheet(dark_styleSheet)
-			else:
 				app.setStyleSheet(light_styleSheet)
+			else:
+				app.setStyleSheet(dark_styleSheet)
 			lb.widget.setText(lb.widget.text() + " append")
 			return True
 		
@@ -43,7 +43,7 @@ def main():
 
 	widget = splitter.add_child(WidgetController(layout=QVBoxLayout()))
 	shadow = widget.add_child(ShadowEdgeController(layout=QVBoxLayout()))
-	shadow.enable_edge(ShadowEdgeController.TOP | ShadowEdgeController.RIGHT | ShadowEdgeController.BOTTOM | ShadowEdgeController.LEFT)
+	shadow.enable_edge(ShadowEdgeController.TOP | ShadowEdgeController.BOTTOM | ShadowEdgeController.LEFT)
 	a = shadow.add_child(WidgetController(layout=QVBoxLayout()))
 	a.widget.setObjectName("test_widget")
 
@@ -54,7 +54,7 @@ def main():
 	a.widget.setObjectName("test_widget2")
 	btn = a.add_child(ButtonController())
 	btn.widget.setFixedSize(200, 40)
-	btn = a.add_child(ToggleController())
+	btn = a.add_child(ToggleController(True))
 	btn.widget.setObjectName("toggle_theme")
 	btn.widget.setFixedSize(60, 30)
 	light_dark_toggle = btn

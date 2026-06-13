@@ -7,11 +7,11 @@ from PySide6.QtGui import QPainter, QColor, QPixmap
 class AnimatedToggle(QWidget):
     toggled = Signal(bool)
 
-    def __init__(self, parent=None, thumb_margin=3, checked_position="right"):
+    def __init__(self, parent=None, thumb_margin=3, checked=False, checked_position="right"):
         """checked_position: "right" or "left""" 
         super().__init__(parent)
-        self._checked = False
-        self._offset = 0.0  # animation parameter 0.0..1.0
+        self._checked = checked
+        self._offset = 0.0 if checked == False else 1.0  # animation parameter 0.0..1.0
         # Use a custom property name to avoid clashing with QWidget.pos()
         self._anim = QPropertyAnimation(self, b"offset", self)
         self._anim.setDuration(160)
@@ -81,9 +81,13 @@ class AnimatedToggle(QWidget):
         painter.setRenderHint(QPainter.SmoothPixmapTransform)
         pix = self._checked_pix_scaled if self._checked else self._unchecked_pix_scaled
         if not pix.isNull():
-            pw, ph = pix.width(), pix.height()            
-            x0 = thumb_rect.x() + (thumb_d - pw) / 2.0
-            y0 = thumb_rect.y() + (thumb_d - ph) / 2.0
+            pw, ph = pix.width(), pix.height()       
+            if pix is self._checked_pix_scaled:     
+                x0 = (w / 2.0 - pw) / 2.0
+                y0 = (h - ph) / 2.0
+            else:
+                x0 = w / 2.0 + (w / 2.0 - pw) / 2.0
+                y0 = (h - ph) / 2.0
             painter.drawPixmap(int(x0), int(y0), pix)
 
     # Animated property (use a unique name 'offset' to avoid QWidget.pos conflict)
@@ -235,8 +239,8 @@ class AnimatedToggle(QWidget):
 
 class ToggleController(WidgetController):
 
-    def __init__(self):
-        super().__init__(layout=None, widget=AnimatedToggle(checked_position="right"))
+    def __init__(self, checked=False):
+        super().__init__(layout=None, widget=AnimatedToggle(checked=checked, checked_position="right"))
         self.widget.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         self.widget.setObjectName("Toggle")
         self.widget.setCursor(Qt.PointingHandCursor)

@@ -23,8 +23,8 @@ QLabel {
 #toggle_theme {
 	qproperty-onColor: #4caf50;
 	qproperty-offColor: #d0d0d0;
-	qproperty-checkedImage: 'app://res/icon/dark_mode.png';
-	qproperty-uncheckedImage: 'app://res/icon/light_mode.png';
+	qproperty-checkedImage: 'app://res/icon/light_mode.png';
+	qproperty-uncheckedImage: 'app://res/icon/dark_mode.png';
 }
 
 QPushButton#Button {
