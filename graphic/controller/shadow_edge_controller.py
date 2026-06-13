@@ -52,7 +52,7 @@ class ShadowEdgeController(WidgetController):
 
         self._edges[direction] = edge
         if direction == self.TOP:
-            edge.setObjectName("shadow_edge_top")
+            edge.setProperty("role", "shadow_edge_top")
             edge.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
             layout = QVBoxLayout()
             layout.setContentsMargins(0, 0, 0, 0)
@@ -65,7 +65,7 @@ class ShadowEdgeController(WidgetController):
             layout.addStretch()
             self._stack_layout.addWidget(layout_widget)
         elif direction == self.RIGHT:
-            edge.setObjectName("shadow_edge_right")
+            edge.setProperty("role", "shadow_edge_right")
             edge.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
             layout = QHBoxLayout()
             layout.setContentsMargins(0, 0, 0, 0)
@@ -78,7 +78,7 @@ class ShadowEdgeController(WidgetController):
             layout.addWidget(edge)
             self._stack_layout.addWidget(layout_widget)
         elif direction == self.BOTTOM:
-            edge.setObjectName("shadow_edge_bottom")
+            edge.setProperty("role", "shadow_edge_bottom")
             edge.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
             layout = QVBoxLayout()
             layout.setContentsMargins(0, 0, 0, 0)
@@ -91,7 +91,7 @@ class ShadowEdgeController(WidgetController):
             layout.addWidget(edge)
             self._stack_layout.addWidget(layout_widget)
         elif direction == self.LEFT:
-            edge.setObjectName("shadow_edge_left")
+            edge.setProperty("role", "shadow_edge_left")
             edge.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
             layout = QHBoxLayout()
             layout.setContentsMargins(0, 0, 0, 0)

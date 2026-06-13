@@ -8,5 +8,5 @@ class ButtonController(WidgetController):
     def __init__(self):
         super().__init__(layout=None, widget=QPushButton("Click"))
         self.widget.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        self.widget.setObjectName("Button")
+        self.widget.setProperty("role", "default")
         self.widget.setCursor(Qt.PointingHandCursor)

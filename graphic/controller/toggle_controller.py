@@ -242,7 +242,7 @@ class ToggleController(WidgetController):
     def __init__(self, checked=False):
         super().__init__(layout=None, widget=AnimatedToggle(checked=checked, checked_position="right"))
         self.widget.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        self.widget.setObjectName("Toggle")
+        self.widget.setProperty("role", "default")
         self.widget.setCursor(Qt.PointingHandCursor)
         self.widget.toggled.connect(self._toggled)
 
