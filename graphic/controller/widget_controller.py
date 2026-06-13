@@ -10,7 +10,7 @@ class WidgetController(Controller):
             self._widget.setLayout(layout)
             layout.setContentsMargins(0, 0, 0, 0)
             layout.setSpacing(0)
-        self._widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self._widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
 #---------------------------------------------------------------------------
 # property
