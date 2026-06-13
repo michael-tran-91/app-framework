@@ -8,7 +8,7 @@ QWidget#test_widget2 {
 }
 
 #Toggle {
-	qproperty-onColor: #4c63af;
+	qproperty-onColor: #4caf50;
 	qproperty-offColor: #d0d0d0;
 }
 

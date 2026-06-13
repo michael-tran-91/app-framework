@@ -1,12 +1,10 @@
 from .widget_controller import WidgetController
-from PySide6.QtWidgets import QPushButton
-from PySide6.QtWidgets import QSizePolicy, QPushButton
+from PySide6.QtWidgets import QSizePolicy
 from PySide6.QtCore import Qt
 
-from PySide6.QtWidgets import QWidget, QApplication, QHBoxLayout, QLabel
+from PySide6.QtWidgets import QWidget
 from PySide6.QtCore import Qt, QRectF, Property, QPropertyAnimation, Signal, QSize
-from PySide6.QtGui import QPainter, QColor, QFont
-import sys
+from PySide6.QtGui import QPainter, QColor
 
 class AnimatedToggle(QWidget):
     toggled = Signal(bool)
@@ -155,3 +153,12 @@ class ToggleController(WidgetController):
         self.widget.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         self.widget.setObjectName("Toggle")
         self.widget.setCursor(Qt.PointingHandCursor)
+        self.widget.toggled.connect(self._toggled)
+
+    def _toggled(self, checked):
+        self.bubble_event({
+            "type" : "toggle_controller_clicked",
+            "data" : {
+                "checked" : checked
+            }
+        })

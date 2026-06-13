@@ -14,11 +14,20 @@ from util.file_manager import fetch as fetch_file_content
 light_styleSheet = fetch_file_content(path="app://res/theme/light.qss", encoding="utf8")
 dark_styleSheet = fetch_file_content(path="app://res/theme/dark.qss", encoding="utf8")
 
+
 def main():
 	app = QApplication(sys.argv)
 	app.setStyleSheet(light_styleSheet)
 
+	def test_handle(event):
+		if event["data"]["checked"]:
+			app.setStyleSheet(dark_styleSheet)
+		else:
+			app.setStyleSheet(light_styleSheet)
+		return True
+
 	root_ctrl = RootController()
+	root_ctrl.register_event_handler("toggle_controller_clicked", test_handle)
 	timer = QTimer()
 	timer.setInterval(16)
 	timer.timeout.connect(root_ctrl.process_events)
@@ -40,7 +49,7 @@ def main():
 	btn = a.add_child(ButtonController())
 	btn.widget.setFixedSize(200, 40)
 	btn = a.add_child(ToggleController())
-	btn.widget.setFixedSize(80, 40)
+	btn.widget.setFixedSize(60, 30)
 
 	splitter.widget.resize(400, 300)
 	splitter.widget.show()

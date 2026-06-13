@@ -7,6 +7,31 @@ QWidget#test_widget2 {
 	border: none;
 }
 
+#Toggle {
+	qproperty-onColor: #4c63af;
+	qproperty-offColor: #d0d0d0;
+}
+
+QPushButton#Button {
+    background-color: #db3434;   /* blue background */
+    color: white;                /* white text */
+    font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 2px solid #db3434;
+}
+
+QPushButton#Button:hover {
+    background-color: #b92929;   /* darker blue on hover */
+	border: 2px solid #b92929;
+}
+
+QPushButton#Button:pressed {
+    background-color: #801c1c;   /* even darker when pressed */
+	border: 2px solid #801c1c;
+}
+
+
 QFrame#shadow_edge_top {
     min-height: 10px;
 	max-height: 10px;
