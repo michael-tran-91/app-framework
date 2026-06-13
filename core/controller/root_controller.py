@@ -6,6 +6,10 @@ class RootController(Controller):
         super().__init__()
         self.event_queue = queue.Queue()
 
+#---------------------------------------------------------------------------
+# public method | event dispatch
+#---------------------------------------------------------------------------
+
     def enqueue_event(self, event, anchor):
         self.event_queue.put((event, anchor))
 
@@ -13,4 +17,4 @@ class RootController(Controller):
         while not self.event_queue.empty():
             event, anchor = self.event_queue.get()
             with acquire_context(event.get("context", {})):
-                anchor._handle_event(event)
+                anchor.dispatch_event(event)

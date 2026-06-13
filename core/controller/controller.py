@@ -85,20 +85,8 @@ class Controller():
 #---------------------------------------------------------------------------
 # public method | event dispatch
 #---------------------------------------------------------------------------
-    def prepare_event_context(self, event, reuse_context = False):
-        if reuse_context:
-            event["context"] = event.get("context", {})
-            event["context"].update(thread_event.context)
-
-        ctrl = self
-        while ctrl:
-            event["context"] = event.get("context", {})
-            event["context"]["controller"] = event["context"].get("controller", set())
-            event["context"]["controller"].add(id(ctrl))
-            ctrl = ctrl.parent
- 
     def bubble_event(self, event, reuse_context = False):
-        self.prepare_event_context(event, reuse_context)
+        self._prepare_event_context(event, reuse_context)
 
         ctrl = self
         while ctrl:
@@ -107,12 +95,21 @@ class Controller():
             ctrl = ctrl.parent
 
     def post_event(self, event, reuse_context = False):
-        self.prepare_event_context(event, reuse_context)
+        self._prepare_event_context(event, reuse_context)
 
         root = self.root
         if hasattr(root, "enqueue_event"):
             root.enqueue_event(event, self)
 
+    def dispatch_event(self, event):
+        if self._handle_event(event):
+            return True
+        
+        for child in self.childrens:
+            if child.dispatch_event(event):
+                return True
+
+        return False
 #---------------------------------------------------------------------------
 # private method | event dispatch
 #---------------------------------------------------------------------------
@@ -132,6 +129,18 @@ class Controller():
     def _in_event_context(self, event):
         ctrl_ids = event.get("context", {}).get("controller", set())
         return id(self) in ctrl_ids
+    
+    def _prepare_event_context(self, event, reuse_context = False):
+        if reuse_context:
+            event["context"] = event.get("context", {})
+            event["context"].update(thread_event.context)
+
+        ctrl = self
+        while ctrl:
+            event["context"] = event.get("context", {})
+            event["context"]["controller"] = event["context"].get("controller", set())
+            event["context"]["controller"].add(id(ctrl))
+            ctrl = ctrl.parent
 
 #---------------------------------------------------------------------------
 # private method
