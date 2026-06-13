@@ -14,7 +14,8 @@ class RootController(Controller):
         self.event_queue.put((event, anchor))
 
     def process_events(self):
-        while not self.event_queue.empty():
+        to_process = self.event_queue.qsize()
+        for _ in range(to_process):
             event, anchor = self.event_queue.get()
             with acquire_context(event.get("context", {})):
                 anchor.dispatch_event(event)

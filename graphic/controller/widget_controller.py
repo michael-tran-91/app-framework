@@ -1,5 +1,5 @@
 from core.controller.controller import Controller
-from PySide6.QtWidgets import QLayout, QSizePolicy, QWidget
+from PySide6.QtWidgets import QLayout, QSizePolicy, QWidget, QLabel
 
 class WidgetController(Controller):
     def __init__(self, layout: QLayout | None = None, widget: QWidget | None = None):

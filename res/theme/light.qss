@@ -7,6 +7,14 @@ QWidget#test_widget2 {
 	border: none;
 }
 
+QWidget#main_background {
+	background-color: #f3f4f6;
+}
+
+QLabel {
+	color: #000000;
+}
+
 #Toggle {
 	qproperty-onColor: #4caf50;
 	qproperty-offColor: #d0d0d0;
