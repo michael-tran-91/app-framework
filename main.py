@@ -9,7 +9,7 @@ from graphic.controller.splitter_controller import SplitterController
 from graphic.controller.button_controller import ButtonController
 from graphic.controller.toggle_controller import ToggleController
 from graphic.controller.label_controller import LabelController
-from graphic.controller.text_field_controller import TextFieldController
+from graphic.controller.notched_text_field_controller import NotchedTextFieldController
 from PySide6.QtCore import Qt
 from util.file_manager import fetch as fetch_file_content
 
@@ -63,16 +63,16 @@ def main():
 	lb = a.add_child(LabelController("Test Label"))
 	a.add_child(LabelController("Test Label"))
 	vb = a.add_child(WidgetController(layout=QVBoxLayout()))
-	tf = vb.add_child(TextFieldController())
+	tf = vb.add_child(NotchedTextFieldController())
 	tf.set_placeholder("input domain or ip")
 	tf.set_label("host")
-	tf = vb.add_child(TextFieldController())
+	tf = vb.add_child(NotchedTextFieldController())
 	tf.set_placeholder("input ssh port")
 	tf.set_label("port")
-	tf = vb.add_child(TextFieldController())
+	tf = vb.add_child(NotchedTextFieldController())
 	tf.set_placeholder("input user")
 	tf.set_label("user")
-	tf = vb.add_child(TextFieldController())
+	tf = vb.add_child(NotchedTextFieldController())
 	tf.set_placeholder("input password")
 	tf.set_label("password")
 

@@ -1,6 +1,7 @@
 QWidget[role="test_widget"] {
 	background-color: #e3e4e6;
 	border: none;
+	min-width: 100px;
 }
 QWidget[role="test_widget2"] {
 	background-color: #f3f4f6;
@@ -15,7 +16,8 @@ QLabel {
 	color: #000000;
 }
 
-QLineEdit[role="default"] {
+
+NotchedLineEdit[role="default"] > QLineEdit {
 	background: transparent;
 	color: #000000;
 	min-height:20px;

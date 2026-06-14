@@ -40,8 +40,6 @@ class NotchedLineEdit(QWidget):
         self.line = FocusLineEdit(self)
         self.line.focused_in.connect(self._on_focused_in)
         self.line.focused_out.connect(self._on_focused_out)
-        self.line.setProperty("role", "default")
-        self.line.setPlaceholderText("No current tab")
         self.line.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         # layout is optional; we'll position child manually in resizeEvent
@@ -217,7 +215,7 @@ class NotchedLineEdit(QWidget):
         self._notch_text = text
         self._notch_w = self._compute_notch_w()
 
-class TextFieldController(WidgetController):
+class NotchedTextFieldController(WidgetController):
 
     def __init__(self):
         super().__init__(layout = None, widget=NotchedLineEdit())

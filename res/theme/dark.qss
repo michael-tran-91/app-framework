@@ -1,6 +1,7 @@
 QWidget[role="test_widget"] {
 	background-color: #14181c;
 	border: none;
+	min-width: 100px;
 }
 QWidget[role="test_widget2"] {
 	background-color: #111214;
@@ -15,7 +16,8 @@ QLabel {
 	color: #ffffff;
 }
 
-QLineEdit[role="default"] {
+
+NotchedLineEdit[role="default"] > QLineEdit {
 	background: transparent;
 	color: #ffffff;
 	min-height:20px;
@@ -34,13 +36,13 @@ NotchedLineEdit[role="default"] {
 }
 
 AnimatedToggle[role="default"] {
-	qproperty-onColor: #4c63af;
+	qproperty-onColor: #323e66;
 	qproperty-offColor: #d0d0d0;
 }
 
 AnimatedToggle[role="toggle_theme"] {
-	qproperty-onColor: #4c63af;
-	qproperty-offColor: #4c63af;
+	qproperty-onColor: #323e66;
+	qproperty-offColor: #323e66;
 	qproperty-checkedImage: 'app://res/icon/light_mode.png';
 	qproperty-uncheckedImage: 'app://res/icon/dark_mode.png';
 }
