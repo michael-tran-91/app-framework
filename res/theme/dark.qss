@@ -16,6 +16,19 @@ QLabel {
 	color: #ffffff;
 }
 
+QLineEdit[role="default"] {
+	background-color: #292929;
+	color: #ffffff;
+	min-height:24px;
+	max-height:24px;
+	border: 1px solid #292929;
+	border-radius: 10px;
+	padding-left: 6px;
+	padding-right: 6px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
 
 NotchedLineEdit[role="default"] > QLineEdit {
 	background: transparent;

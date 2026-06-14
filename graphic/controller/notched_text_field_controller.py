@@ -1,11 +1,7 @@
 from .widget_controller import WidgetController
-from PySide6.QtWidgets import QLineEdit, QSizePolicy
-
-import sys
-from html import unescape
 from PySide6.QtWidgets import QLineEdit, QWidget, QSizePolicy
 from PySide6.QtCore import Qt, QRectF, QPointF
-from PySide6.QtGui import QPainter, QPalette, QColor, QPen, QFontMetrics, QPainterPath
+from PySide6.QtGui import QPainter, QColor, QPen, QFontMetrics, QPainterPath
 from PySide6.QtCore import Signal, Property
 
 class FocusLineEdit(QLineEdit):
@@ -84,8 +80,8 @@ class NotchedLineEdit(QWidget):
 
     def _reposition_child(self):
         # place the QLineEdit child at y = offset_y, full width minus margins
-        left_margin = 8
-        right_margin = 8
+        left_margin = 0
+        right_margin = 0
         w = max(0, self.width() - left_margin - right_margin)
         h = self.line.sizeHint().height()
         self.line.setGeometry(left_margin, self._offset_y * 1.75, w, h)
@@ -99,9 +95,9 @@ class NotchedLineEdit(QWidget):
         pen_w = max(1, self._border_w) * 0.5
         inset = pen_w / 2.0
 
-        left = inset + 8   # align with child left_margin
+        left = inset
         top = inset + self._offset_y
-        right = w - inset - 8
+        right = w - inset
         bottom = h - inset
 
         # compute notch position

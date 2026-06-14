@@ -10,6 +10,7 @@ from graphic.controller.button_controller import ButtonController
 from graphic.controller.toggle_controller import ToggleController
 from graphic.controller.label_controller import LabelController
 from graphic.controller.notched_text_field_controller import NotchedTextFieldController
+from graphic.controller.text_field_controller import TextFieldController
 from PySide6.QtCore import Qt
 from util.file_manager import fetch as fetch_file_content
 
@@ -72,7 +73,7 @@ def main():
 	tf = vb.add_child(NotchedTextFieldController())
 	tf.set_placeholder("input user")
 	tf.set_label("user")
-	tf = vb.add_child(NotchedTextFieldController())
+	tf = vb.add_child(TextFieldController())
 	tf.set_placeholder("input password")
 	tf.set_label("password")
 
