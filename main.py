@@ -33,7 +33,9 @@ class AppWidget(WidgetController):
 	def _on_attached(self):
 		super()._on_attached()
 		stack = self.add_child(StackedController())
-		stack.widget.setObjectName("main_background")
+		stack.dispatch_event(Event(event_type="set", data={
+			"role" : "main_background"
+		}))
 		splitter = stack.add_child(SplitterController(orientation=Qt.Horizontal))
 
 		widget = splitter.add_child(WidgetController(layout=QVBoxLayout()))
@@ -52,13 +54,19 @@ class AppWidget(WidgetController):
 			"role" : "test_widget2"
 		}))
 		btn = a.add_child(ButtonController())
-		btn.widget.setFixedSize(200, 40)
+		btn.dispatch_event(Event(event_type="set", data={
+			"fixed_width" : 200,
+			"fixed_height" : 40
+		}))
+
 		btn = a.add_child(ToggleController(True))
 		btn.dispatch_event(Event(event_type="set", data={
-			"role" : "toggle_theme"
+			"role" : "toggle_theme",
+			"fixed_width" : 60,
+			"fixed_height" : 30
 		}))
-		btn.widget.setFixedSize(60, 30)
 		self.light_dark_toggle = btn
+
 		a = shadow.add_child(WidgetController(layout=QHBoxLayout()))
 		self.lb = a.add_child(LabelController("Test Label"))
 		self.lb.dispatch_event(Event(event_type="set", data={

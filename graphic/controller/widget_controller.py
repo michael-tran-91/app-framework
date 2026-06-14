@@ -19,6 +19,10 @@ class WidgetController(Controller):
     def handle_set(self, event: Event):
         if "role" in event.data:
             self.widget.setProperty("role", event.data["role"])
+        if "fixed_width" in event.data:
+            self.widget.setFixedWidth(event.data["fixed_width"])
+        if "fixed_height" in event.data:
+            self.widget.setFixedHeight(event.data["fixed_height"])
 
 #---------------------------------------------------------------------------
 # property
