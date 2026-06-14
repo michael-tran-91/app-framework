@@ -131,13 +131,13 @@ QFrame[role="shadow_edge_right"] {
 
 QScrollBar:vertical {
     background: transparent;
-    width: 16px;
+    width: 12px;
     margin: 0px;
 }
 
 QScrollBar::handle:vertical {
     background: rgba(128, 128, 128, 180);
-    border-radius: 10px;
+    border-radius: 6px;
     min-height: 20px;
 }
 
@@ -176,5 +176,5 @@ QScrollBar::sub-page:horizontal {
 AnimatedScrollBar[role="default"] {
 	qproperty-handleColor: #c7c7c7;
 	qproperty-hoverColor: #c7c7c7;
-	qproperty-handleRadius: 8px;
+	qproperty-radius: 0;
 }

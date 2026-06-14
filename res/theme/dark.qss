@@ -16,6 +16,32 @@ QLabel {
 	color: #ffffff;
 }
 
+QTableWidget[role="default"]  {
+	background-color: #14181c;
+	border: none;
+	outline: none;
+}
+
+QTableWidget[role="default"]::item {
+	border-bottom: 1px solid #282828;
+	padding-left: 6px;
+	padding-right: 6px;
+	color: #ffffff;
+}
+
+QHeaderView::section[role="default"] {
+    background-color: #21272d;
+    color: #ffffff;
+    font-weight: medium;
+    padding: 6px;
+    border: none;
+}
+
+QHeaderView::section[role="default"]:hover {
+	border: none;
+    border-bottom: 1px solid #6c6c6c;
+}
+
 QLineEdit[role="default"] {
 	background-color: #292929;
 	color: #ffffff;
@@ -102,4 +128,55 @@ QFrame[role="shadow_edge_right"] {
 	min-width: 10px;
 	max-width: 10px;
 	background: qlineargradient(x1:1, y1:0, x2:0, y2:0, stop:0 rgba(0, 0, 0, 5), stop:1 rgba(0, 0, 0, 0));
+}
+
+
+QScrollBar:vertical {
+    background: transparent;
+    width: 12px;
+    margin: 0px;
+}
+
+QScrollBar::handle:vertical {
+    background: rgba(128, 128, 128, 180);
+    border-radius: 6px;
+    min-height: 20px;
+}
+
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:vertical {
+    background: transparent;
+}
+
+QScrollBar:horizontal {
+    background: transparent;
+    height: 10px;
+    margin: 0px;
+}
+
+QScrollBar::handle:horizontal {
+    background: rgba(128, 128, 128, 180);
+    border-radius: 5px;
+    min-width: 20px;
+}
+
+QScrollBar::add-line:horizontal,
+QScrollBar::sub-line:horizontal {
+    width: 0px;
+}
+
+QScrollBar::add-page:horizontal,
+QScrollBar::sub-page:horizontal {
+    background: transparent;
+}
+
+AnimatedScrollBar[role="default"] {
+	qproperty-handleColor: #353535;
+	qproperty-hoverColor: #353535;
+	qproperty-radius: 0;
 }

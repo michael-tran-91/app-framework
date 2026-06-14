@@ -1,64 +1,98 @@
 from PySide6.QtCore import (
     Qt,
-    Property,
-    QPropertyAnimation,
-    QEasingCurve,
+    QObject,
+    QEvent,
     QTimer,
+    Property,
+    QEasingCurve,
+    QPropertyAnimation,
 )
-from PySide6.QtGui import QColor, QPainter
+from PySide6.QtGui import (
+    QColor,
+    QPainter,
+)
 from PySide6.QtWidgets import (
     QScrollBar,
     QStyle,
     QStyleOptionSlider,
 )
 
-
 class AnimatedScrollBar(QScrollBar):
     def __init__(self, orientation, parent=None):
         super().__init__(orientation, parent)
 
         self._opacity = 0.0
-        self._handle_color = QColor("#808080")
-        self._hover_color = QColor("#a0a0a0")
-        self._handle_radius = 4
-        self._hovered = False
+        self._handleColor = QColor("#c7c7c7")
+        self._hoverColor = QColor("#c7c7c7")
+        self._radius = 4
+        self._mouseOnViewport = False
+        self._mouseOnScrollbar = False
 
         self.setMouseTracking(True)
+        # animation
+        self._animation = QPropertyAnimation(
+            self,
+            b"opacity",
+            self,
+        )
+        self._animation.setDuration(400)
+        self._animation.setEasingCurve(
+            QEasingCurve.OutCubic
+        )
+        # hide timer
+        self._hideTimer = QTimer(self)
+        self._hideTimer.setSingleShot(True)
+        self._hideTimer.setInterval(800)
+        self._hideTimer.timeout.connect(
+            self.fadeOut
+        )
+        self.valueChanged.connect(
+            self.showTemporarily
+        )
 
-        self._animation = QPropertyAnimation(self, b"opacity", self)
-        self._animation.setDuration(150)
-        self._animation.setEasingCurve(QEasingCurve.OutCubic)
-
-        self._hide_timer = QTimer(self)
-        self._hide_timer.setSingleShot(True)
-        self._hide_timer.setInterval(1200)
-        self._hide_timer.timeout.connect(self.fade_out)
-
-        self.valueChanged.connect(self.show_temporarily)
         self.setProperty("role", "default")
 
-    # ==========================================================
-    # opacity property
-    # ==========================================================
+    # =====================================================
+    # Install on scroll area
+    # =====================================================
+
+    def attachTo(self, scrollArea):
+        viewport = scrollArea.viewport()
+
+        viewport.setMouseTracking(True)
+        viewport.installEventFilter(self)
+
+    # =====================================================
+    # Properties
+    # =====================================================
 
     def getOpacity(self):
         return self._opacity
 
     def setOpacity(self, value):
-        self._opacity = max(0.0, min(1.0, float(value)))
+        self._opacity = max(
+            0.0,
+            min(
+                1.0,
+                float(value),
+            ),
+        )
+
         self.update()
 
-    opacity = Property(float, getOpacity, setOpacity)
+    opacity = Property(
+        float,
+        getOpacity,
+        setOpacity,
+    )
 
-    # ==========================================================
-    # stylesheet properties
-    # ==========================================================
+    # -------------------------
 
     def getHandleColor(self):
-        return self._handle_color
+        return self._handleColor
 
-    def setHandleColor(self, color):
-        self._handle_color = QColor(color)
+    def setHandleColor(self, value):
+        self._handleColor = QColor(value)
         self.update()
 
     handleColor = Property(
@@ -67,11 +101,13 @@ class AnimatedScrollBar(QScrollBar):
         setHandleColor,
     )
 
-    def getHoverColor(self):
-        return self._hover_color
+    # -------------------------
 
-    def setHoverColor(self, color):
-        self._hover_color = QColor(color)
+    def getHoverColor(self):
+        return self._hoverColor
+
+    def setHoverColor(self, value):
+        self._hoverColor = QColor(value)
         self.update()
 
     hoverColor = Property(
@@ -80,63 +116,116 @@ class AnimatedScrollBar(QScrollBar):
         setHoverColor,
     )
 
-    def getHandleRadius(self):
-        return self._handle_radius
+    # -------------------------
 
-    def setHandleRadius(self, value):
-        self._handle_radius = int(value)
-        print(f"set handle radius: {self._handle_radius}")
+    def getRadius(self):
+        return self._radius
+
+    def setRadius(self, value):
+        self._radius = int(value)
         self.update()
 
-    handleRadius = Property(
+    radius = Property(
         int,
-        getHandleRadius,
-        setHandleRadius,
+        getRadius,
+        setRadius,
     )
 
-    # ==========================================================
-    # animation helpers
-    # ==========================================================
+    # =====================================================
+    # Animation
+    # =====================================================
 
-    def animate_to(self, value):
+    def animateTo(self, target):
         self._animation.stop()
-        self._animation.setStartValue(self._opacity)
-        self._animation.setEndValue(value)
+
+        self._animation.setStartValue(
+            self._opacity
+        )
+
+        self._animation.setEndValue(
+            target
+        )
+
         self._animation.start()
 
-    def fade_in(self):
-        self.animate_to(1.0)
+    def fadeIn(self):
+        self.animateTo(1.0)
 
-    def fade_out(self):
-        if self._hovered:
+    def fadeOut(self):
+        if (
+            self._mouseOnViewport
+            or self._mouseOnScrollbar
+        ):
             return
 
-        self.animate_to(0.0)
+        self.animateTo(0.0)
 
-    def show_temporarily(self):
-        self.fade_in()
-        self._hide_timer.start()
+    # =====================================================
+    # Activity
+    # =====================================================
 
-    # ==========================================================
-    # events
-    # ==========================================================
+    def showTemporarily(self):
+        self.fadeIn()
+
+        if (
+            not self._mouseOnViewport
+            and not self._mouseOnScrollbar
+        ):
+            self._hideTimer.start()
+
+    # =====================================================
+    # Mouse events
+    # =====================================================
 
     def enterEvent(self, event):
-        self._hovered = True
-        self._hide_timer.stop()
-        self.fade_in()
+        self._mouseOnScrollbar = True
+
+        self._hideTimer.stop()
+
+        self.fadeIn()
+
         super().enterEvent(event)
 
     def leaveEvent(self, event):
-        self._hovered = False
-        self._hide_timer.start()
+        self._mouseOnScrollbar = False
+
+        if not self._mouseOnViewport:
+            self._hideTimer.start()
+
         super().leaveEvent(event)
 
-    # ==========================================================
-    # painting
-    # ==========================================================
+    # =====================================================
+    # Viewport tracking
+    # =====================================================
+
+    def eventFilter(
+        self,
+        obj,
+        event,
+    ):
+        if event.type() == QEvent.Enter:
+
+            self._mouseOnViewport = True
+
+            self._hideTimer.stop()
+
+            self.fadeIn()
+
+        elif event.type() == QEvent.Leave:
+
+            self._mouseOnViewport = False
+
+            if not self._mouseOnScrollbar:
+                self._hideTimer.start()
+
+        return False
+
+    # =====================================================
+    # Paint
+    # =====================================================
 
     def paintEvent(self, event):
+
         if self.maximum() <= self.minimum():
             return
 
@@ -144,37 +233,56 @@ class AnimatedScrollBar(QScrollBar):
             return
 
         painter = QPainter(self)
-        painter.setRenderHint(QPainter.Antialiasing)
+
+        painter.setRenderHint(
+            QPainter.Antialiasing
+        )
 
         opt = QStyleOptionSlider()
+
         self.initStyleOption(opt)
 
-        handle_rect = self.style().subControlRect(
-            QStyle.CC_ScrollBar,
-            opt,
-            QStyle.SC_ScrollBarSlider,
-            self,
+        handleRect = (
+            self.style().subControlRect(
+                QStyle.CC_ScrollBar,
+                opt,
+                QStyle.SC_ScrollBarSlider,
+                self,
+            )
         )
 
         color = (
-            self._hover_color
-            if self._hovered
-            else self._handle_color
+            self._hoverColor
+            if (
+                self._mouseOnViewport
+                or self._mouseOnScrollbar
+            )
+            else self._handleColor
         )
 
         color = QColor(color)
-        color.setAlphaF(self._opacity)
 
-        painter.setPen(Qt.NoPen)
-        painter.setBrush(color)
+        color.setAlphaF(
+            self._opacity
+        )
 
-        if self.orientation() == Qt.Vertical:
-            handle_rect.adjust(2, 2, -2, -2)
-        else:
-            handle_rect.adjust(2, 2, -2, -2)
+        painter.setPen(
+            Qt.NoPen
+        )
+
+        painter.setBrush(
+            color
+        )
+
+        handleRect.adjust(
+            1,
+            1,
+            -1,
+            -1,
+        )
 
         painter.drawRoundedRect(
-            handle_rect,
-            self._handle_radius,
-            self._handle_radius,
+            handleRect,
+            self._radius,
+            self._radius,
         )

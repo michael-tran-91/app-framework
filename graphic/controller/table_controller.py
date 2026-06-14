@@ -1,6 +1,6 @@
 from .widget_controller import WidgetController
 from core.controller.controller import Event
-from PySide6.QtWidgets import QTableWidget, QHeaderView, QTableWidgetItem, QAbstractItemView
+from PySide6.QtWidgets import QTableWidget, QSlider, QHeaderView, QTableWidgetItem, QAbstractItemView
 from PySide6.QtCore import Qt
 from ..widget.animated_scrollbar import AnimatedScrollBar
 
@@ -8,6 +8,7 @@ class TableController(WidgetController):
 
     def __init__(self):
         super().__init__(layout=None, widget=QTableWidget())
+        self.widget.setViewportMargins(0, 0, 50, 0)  # left, top, right, bottom
         self.widget.setProperty("role", "default")
         self.widget.horizontalHeader().setProperty("role", "default")
         self.widget.setShowGrid(False)
@@ -16,13 +17,13 @@ class TableController(WidgetController):
         self.widget.verticalHeader().setVisible(False)
         self.widget.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.widget.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
-        self.widget.setVerticalScrollBar(
-            AnimatedScrollBar(Qt.Vertical, self.widget)
-        )
+        scrollbar = AnimatedScrollBar(Qt.Vertical, self.widget)
+        self.widget.setVerticalScrollBar(scrollbar)
+        scrollbar.attachTo(self.widget)
 
-        self.widget.setHorizontalScrollBar(
-            AnimatedScrollBar(Qt.Horizontal, self.widget)
-        )
+        scrollbar = AnimatedScrollBar(Qt.Horizontal, self.widget)
+        self.widget.setHorizontalScrollBar(scrollbar)
+        scrollbar.attachTo(self.widget)
 
     def handle_set(self, event: Event):
         super().handle_set(event)
