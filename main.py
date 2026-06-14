@@ -12,6 +12,7 @@ from graphic.controller.toggle_controller import ToggleController
 from graphic.controller.label_controller import LabelController
 from graphic.controller.notched_text_field_controller import NotchedTextFieldController
 from graphic.controller.text_field_controller import TextFieldController
+from graphic.controller.table_controller import TableController
 from PySide6.QtCore import Qt
 from util.file_manager import fetch as fetch_file_content
 
@@ -46,6 +47,12 @@ class AppWidget(WidgetController):
 		a = shadow.add_child(WidgetController(layout=QVBoxLayout()))
 		a.dispatch_event(Event(event_type="set", data={
 			"role" : "test_widget"
+		}))
+		tblc = a.add_child(TableController())
+		tblc.dispatch_event(Event(event_type="set", data={
+			"columns": 3,
+			"headers" : ["adress", "class name", "function name"],
+			"columns_width" : [100, -1, -1]
 		}))
 
 		widget = splitter.add_child(WidgetController(layout=QVBoxLayout()))
