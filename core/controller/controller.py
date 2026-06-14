@@ -146,7 +146,8 @@ class Controller():
 
         ctrl = self
         while ctrl:
-            if ctrl._handle_event(event):
+            ctrl._handle_event(event)
+            if not event.is_continue_propagation():
                 return
             ctrl = ctrl.parent
 
@@ -165,29 +166,28 @@ class Controller():
 # private method | event dispatch
 #---------------------------------------------------------------------------
     def _dispatch_event(self, event: Event, controllers):
-        if self._handle_event(event):
-            return True
+        self._handle_event(event)
+        if not event.is_continue_propagation():
+            return
         
         for child in self.childrens:
             if controllers is not None and id(child) not in controllers:
                 continue
 
-            if child._dispatch_event(event, controllers):
-                return True
-
-        return False
+            child._dispatch_event(event, controllers)
+            if not event.is_continue_propagation():
+                break
 
     def _handle_event(self, event: Event):
         if not self._in_event_context(event):
-            return False
+            return
         ctrl_ids = event.context["controller"]
 
         handlers = self.event_handlers.get(event.event_type, [])
         for handler, required_ids in handlers:
-            if ctrl_ids.issuperset(required_ids):
-                if handler(event):
-                    return True
-        return False
+            if not ctrl_ids.issuperset(required_ids):
+                continue
+            handler(event)
     
 #---------------------------------------------------------------------------
 # private method | paticipate int event context

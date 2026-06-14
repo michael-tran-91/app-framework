@@ -30,7 +30,6 @@ class AppWidget(WidgetController):
 		else:
 			self._app.setStyleSheet(dark_styleSheet)
 		self.lb.widget.setText(self.lb.widget.text() + " append")
-		return True
 
 	def _on_attached(self):
 		super()._on_attached()
