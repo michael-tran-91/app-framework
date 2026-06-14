@@ -12,11 +12,12 @@ class TableController(WidgetController):
         self.widget.setProperty("role", "default")
         self.widget.horizontalHeader().setProperty("role", "default")
         self.widget.setShowGrid(False)
-        self.widget.horizontalHeader().setFixedHeight(30)
+        self.widget.horizontalHeader().setFixedHeight(24)
         self.widget.setSelectionBehavior(QTableWidget.SelectRows)
         self.widget.setSelectionMode(QTableWidget.SingleSelection)
         self.widget.verticalHeader().hide()
         self.widget.verticalHeader().setHighlightSections(False)
+        self.widget.horizontalHeader().setHighlightSections(False)
         self.widget.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.widget.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
 

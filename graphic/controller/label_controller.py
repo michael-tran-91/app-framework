@@ -8,6 +8,7 @@ class LabelController(WidgetController):
         super().__init__(layout=None, widget=QLabel())
         self.widget.setWordWrap(True)
         self.widget.setText(text)
+        self._widget.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
 
     def _on_attached(self):
         super()._on_attached()

@@ -1,24 +1,32 @@
+from PySide6.QtWidgets import QApplication, QPushButton
 import sys
-from PySide6.QtWidgets import (
-    QApplication, QTableWidget, QPushButton, QCheckBox
-)
 
 app = QApplication(sys.argv)
 
-table = QTableWidget()
-table.setRowCount(3)
-table.setColumnCount(2)
-table.setHorizontalHeaderLabels(["Action", "Select"])
+button = QPushButton("Gradient Border")
 
-# Add a button in the first column
-for row in range(3):
-    btn = QPushButton(f"Click {row+1}")
-    table.setCellWidget(row, 0, btn)
+button.setStyleSheet("""
+QPushButton {
+    color: black;
+    background-color: white;
+    border: 3px solid transparent;
+    border-radius: 8px;
+    padding: 6px 12px;
 
-# Add a checkbox in the second column
-for row in range(3):
-    chk = QCheckBox("Check")
-    table.setCellWidget(row, 1, chk)
+    /* Gradient border trick */
+    background-clip: padding-box;
+}
 
-table.show()
+QPushButton {
+    border-image: none;
+    border: 3px solid transparent;
+    border-radius: 8px;
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    background-image: linear-gradient(white, white),
+                      linear-gradient(45deg, #ff0000, #0000ff);
+}
+""")
+
+button.show()
 sys.exit(app.exec())

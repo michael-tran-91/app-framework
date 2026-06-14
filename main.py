@@ -58,23 +58,29 @@ class AppWidget(WidgetController):
 		widget = splitter.add_child(WidgetController(layout=QVBoxLayout()))
 		shadow = widget.add_child(ShadowEdgeController(layout=QVBoxLayout()))
 		shadow.dispatch_event(Event(event_type="set", data={
+			"content_margins" : [6, 6, 0, 0]
+		}))
+
+		shadow.dispatch_event(Event(event_type="set", data={
 			"side" : ShadowEdgeController.TOP | ShadowEdgeController.RIGHT | ShadowEdgeController.BOTTOM | ShadowEdgeController.LEFT
 		}))
 		a = shadow.add_child(WidgetController(layout=QVBoxLayout()))
+		a.widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
 		a.dispatch_event(Event(event_type="set", data={
-			"role" : "test_widget2"
+			"role" : "test_widget2",
+			"spacing" : 10
 		}))
 		btn = a.add_child(ButtonController())
 		btn.dispatch_event(Event(event_type="set", data={
-			"fixed_width" : 200,
-			"fixed_height" : 40
+			"width" : 100,
+			"height" : 40
 		}))
 
 		btn = a.add_child(ToggleController(True))
 		btn.dispatch_event(Event(event_type="set", data={
 			"role" : "toggle_theme",
-			"fixed_width" : 60,
-			"fixed_height" : 30
+			"width" : 60,
+			"height" : 30
 		}))
 		self.light_dark_toggle = btn
 
@@ -85,25 +91,38 @@ class AppWidget(WidgetController):
 		}), reuse_context=True)
 		a.add_child(LabelController("Test Label"))
 		vb = a.add_child(WidgetController(layout=QVBoxLayout()))
+		vb.dispatch_event(Event(event_type="set", data={
+			"spacing" : 10
+		}))
 		tf = vb.add_child(NotchedTextFieldController())
 		tf.dispatch_event(Event(event_type="set", data={
 			"placeholder" : "input domain or ip",
-			"label" : "host"
+			"label" : "host",
+			"width" : 300
 		}))
 		tf = vb.add_child(NotchedTextFieldController())
 		tf.dispatch_event(Event(event_type="set", data={
 			"placeholder" : "input ssh port",
-			"label" : "port"
+			"label" : "port",
+			"width" : 300
 		}))
 		tf = vb.add_child(NotchedTextFieldController())
 		tf.dispatch_event(Event(event_type="set", data={
 			"placeholder" : "input user",
-			"label" : "user"
+			"label" : "user",
+			"width" : 300
 		}))
 		tf = vb.add_child(TextFieldController())
 		tf.dispatch_event(Event(event_type="set", data={
 			"placeholder" : "input password",
-			"label" : "password"
+			"label" : "password",
+			"width" : 300
+		}))
+		tblc = vb.add_child(TableController())
+		tblc.dispatch_event(Event(event_type="set", data={
+			"columns": 3,
+			"headers" : ["adress", "class name", "function name"],
+			"columns_width" : [100, -1, -1]
 		}))
 
 		self.register_event_handler("toggle_controller_clicked", self.handle_light_dark, required_controllers=[

@@ -41,7 +41,7 @@ QTableWidget[role="default"]::item:selected {
 QHeaderView::section[role="default"] {
     background-color: #21272d;
     color: #ffffff;
-    font-weight: medium;
+    font-weight: 500;
     padding: 6px;
     border: none;
 }

@@ -19,10 +19,26 @@ class WidgetController(Controller):
     def handle_set(self, event: Event):
         if "role" in event.data:
             self.widget.setProperty("role", event.data["role"])
+        if "width" in event.data:
+            self.widget.setMinimumWidth(event.data["width"])
+            self.widget.setMaximumWidth(event.data["width"])
+        if "height" in event.data:
+            self.widget.setMinimumHeight(event.data["height"])
+            self.widget.setMaximumHeight(event.data["height"])
         if "fixed_width" in event.data:
             self.widget.setFixedWidth(event.data["fixed_width"])
         if "fixed_height" in event.data:
             self.widget.setFixedHeight(event.data["fixed_height"])
+        if "content_margins" in event.data:
+            target = self.layout if self.layout is not None else self.widget
+            target.setContentsMargins(
+                event.data["content_margins"][0],
+                event.data["content_margins"][1],
+                event.data["content_margins"][2],
+                event.data["content_margins"][3])
+        if "spacing" in event.data:
+            if self.layout:
+                self.layout.setSpacing(event.data["spacing"])
 
 #---------------------------------------------------------------------------
 # property
