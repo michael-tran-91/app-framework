@@ -1,4 +1,5 @@
 from .widget_controller import WidgetController
+from core.controller.controller import Event
 from PySide6.QtWidgets import QSizePolicy, QWidget
 from PySide6.QtCore import Qt, QRectF, Property, QPropertyAnimation, Signal, QSize
 from PySide6.QtGui import QPainter, QColor, QPixmap
@@ -247,7 +248,6 @@ class ToggleController(WidgetController):
         self.widget.toggled.connect(self._toggled)
 
     def _toggled(self, checked):
-        self.bubble_event({
-            "type": "toggle_controller_clicked",
-            "data": {"checked": checked},
-        })
+        self.bubble_event(Event(event_type="toggle_controller_clicked", data={
+            "checked" : checked
+        }))

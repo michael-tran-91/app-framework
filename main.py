@@ -1,6 +1,7 @@
 import sys
 from PySide6.QtWidgets import (QApplication, QSizePolicy, QVBoxLayout, QHBoxLayout)
 from PySide6.QtCore import QTimer
+from core.controller.controller import Event
 from core.controller.root_controller import RootController
 from graphic.controller.widget_controller import WidgetController
 from graphic.controller.shadow_edge_controller import ShadowEdgeController
@@ -23,8 +24,8 @@ class AppWidget(WidgetController):
 		super().__init__(layout=QVBoxLayout())
 		self._app = app
 
-	def handle_light_dark(self, event):
-		if event["data"]["checked"]:
+	def handle_light_dark(self, event: Event):
+		if event.data["checked"]:
 			self._app.setStyleSheet(light_styleSheet)
 		else:
 			self._app.setStyleSheet(dark_styleSheet)
@@ -59,37 +60,25 @@ class AppWidget(WidgetController):
 		a.add_child(LabelController("Test Label"))
 		vb = a.add_child(WidgetController(layout=QVBoxLayout()))
 		tf = vb.add_child(NotchedTextFieldController())
-		tf.dispatch_event({
-			"type" : "set",
-			"data" : {
-				"placeholder" : "input domain or ip",
-				"label" : "host"
-			}
-		})
+		tf.dispatch_event(Event(event_type="set", data={
+			"placeholder" : "input domain or ip",
+			"label" : "host"
+		}))
 		tf = vb.add_child(NotchedTextFieldController())
-		tf.dispatch_event({
-			"type" : "set",
-			"data" : {
-				"placeholder" : "input ssh port",
-				"label" : "port"
-			}
-		})
+		tf.dispatch_event(Event(event_type="set", data={
+			"placeholder" : "input ssh port",
+			"label" : "port"
+		}))
 		tf = vb.add_child(NotchedTextFieldController())
-		tf.dispatch_event({
-			"type" : "set",
-			"data" : {
-				"placeholder" : "input user",
-				"label" : "user"
-			}
-		})
+		tf.dispatch_event(Event(event_type="set", data={
+			"placeholder" : "input user",
+			"label" : "user"
+		}))
 		tf = vb.add_child(TextFieldController())
-		tf.dispatch_event({
-			"type" : "set",
-			"data" : {
-				"placeholder" : "input password",
-				"label" : "password"
-			}
-		})
+		tf.dispatch_event(Event(event_type="set", data={
+			"placeholder" : "input password",
+			"label" : "password"
+		}))
 
 		self.register_event_handler("toggle_controller_clicked", self.handle_light_dark, required_controllers=[
 			self.light_dark_toggle

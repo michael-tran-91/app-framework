@@ -12,6 +12,9 @@ class WidgetController(Controller):
             layout.setSpacing(0)
         self._widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
+    def _on_attached(self):
+        super()._on_attached()
+
 #---------------------------------------------------------------------------
 # property
 #---------------------------------------------------------------------------

@@ -1,4 +1,5 @@
 from .widget_controller import WidgetController
+from core.controller.controller import Event
 from PySide6.QtWidgets import QLineEdit, QWidget, QSizePolicy
 
 class TextFieldController(WidgetController):
@@ -12,7 +13,6 @@ class TextFieldController(WidgetController):
         super()._on_attached()
         self.register_event_handler("set", self.handle_set)
 
-    def handle_set(self, event):
-        data = event.get("data", {})
-        if "placeholder" in data:
-            self.widget.setPlaceholderText(data["placeholder"])
+    def handle_set(self, event: Event):
+        if "placeholder" in event.data:
+            self.widget.setPlaceholderText(event.data["placeholder"])

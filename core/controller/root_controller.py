@@ -1,4 +1,4 @@
-from .controller import Controller, acquire_context
+from .controller import Controller, Event, acquire_context
 import queue
 
 class RootController(Controller):
@@ -16,15 +16,15 @@ class RootController(Controller):
         self.event_paths[event_type].update(controllers)
         
 
-    def enqueue_event(self, event, anchor):
+    def enqueue_event(self, event: Event, anchor):
         self.event_queue.put((event, anchor))
 
     def process_events(self):
         to_process = self.event_queue.qsize()
         for _ in range(to_process):
             event, anchor = self.event_queue.get()
-            with acquire_context(event.get("context", {})):
-                controllers = self.event_paths.get(event.get("type", ""), None)
+            with acquire_context(event.context):
+                controllers = self.event_paths.get(event.event_type, None)
                 if controllers is not None:
                     if id(anchor) in controllers:
                         anchor._dispatch_event(event, controllers)

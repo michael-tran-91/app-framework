@@ -1,13 +1,43 @@
 import threading, copy
 
 thread_event = threading.local()
-thread_event.context = {}
+thread_event.context = {
+    "controllers" : set()
+}
 
 def acquire_context(ctx):
     old_ctx = thread_event.context
     thread_event.context = ctx
     yield
     thread_event.context = old_ctx
+
+class Event:
+    def __init__(self, event_type: str, data: dict|None = None):
+        self._event_type = event_type
+        self._data = data
+        self._propagation = True
+        self._context = {
+            "controller" : set()    
+        }
+
+    @property
+    def event_type(self):
+        return self._event_type
+    
+    @property
+    def data(self):
+        return self._data
+    
+    @property
+    def context(self):
+        return self._context
+
+    def is_continue_propagation(self):
+        return self._propagation
+    
+    def stop_propagation(self):
+        self._propagation = False
+
 
 class Controller():
     def __init__(self):
@@ -111,7 +141,7 @@ class Controller():
 #---------------------------------------------------------------------------
 # public method | event dispatch
 #---------------------------------------------------------------------------
-    def bubble_event(self, event, reuse_context = False):
+    def bubble_event(self, event: Event, reuse_context = False):
         self._prepare_event_context(event, reuse_context)
 
         ctrl = self
@@ -120,21 +150,21 @@ class Controller():
                 return
             ctrl = ctrl.parent
 
-    def post_event(self, event, reuse_context = False):
+    def post_event(self, event: Event, reuse_context = False):
         self._prepare_event_context(event, reuse_context)
 
         root = self.root
         if hasattr(root, "enqueue_event"):
             root.enqueue_event(event, self)
 
-    def dispatch_event(self, event, reuse_context = False):
+    def dispatch_event(self, event: Event, reuse_context = False):
         self._prepare_event_context(event, reuse_context)
         self._dispatch_event(event, None)
 
 #---------------------------------------------------------------------------
 # private method | event dispatch
 #---------------------------------------------------------------------------
-    def _dispatch_event(self, event, controllers):
+    def _dispatch_event(self, event: Event, controllers):
         if self._handle_event(event):
             return True
         
@@ -147,12 +177,12 @@ class Controller():
 
         return False
 
-    def _handle_event(self, event):
+    def _handle_event(self, event: Event):
         if not self._in_event_context(event):
             return False
-        ctrl_ids = event.get("context", {}).get("controller", set())
+        ctrl_ids = event.context["controller"]
 
-        handlers = self.event_handlers.get(event["type"], [])
+        handlers = self.event_handlers.get(event.event_type, [])
         for handler, required_ids in handlers:
             if ctrl_ids.issuperset(required_ids):
                 if handler(event):
@@ -162,20 +192,17 @@ class Controller():
 #---------------------------------------------------------------------------
 # private method | paticipate int event context
 #---------------------------------------------------------------------------
-    def _in_event_context(self, event):
-        ctrl_ids = event.get("context", {}).get("controller", set())
+    def _in_event_context(self, event: Event):
+        ctrl_ids = event.context["controller"]
         return id(self) in ctrl_ids
     
-    def _prepare_event_context(self, event, reuse_context = False):
+    def _prepare_event_context(self, event: Event, reuse_context = False):
         if reuse_context:
-            event["context"] = event.get("context", {})
-            event["context"].update(thread_event.context)
+            event.context.update(thread_event.context)
 
         ctrl = self
         while ctrl:
-            event["context"] = event.get("context", {})
-            event["context"]["controller"] = event["context"].get("controller", set())
-            event["context"]["controller"].add(id(ctrl))
+            event.context["controller"].add(id(ctrl))
             ctrl = ctrl.parent
 
 #---------------------------------------------------------------------------
