@@ -8,7 +8,7 @@ from PySide6.QtCore import Qt, QRectF, QPointF
 from PySide6.QtGui import QPainter, QColor, QPen, QFontMetrics, QPainterPath
 
 class NotchedLineEdit(QWidget):
-    def __init__(self, notch_text: str = "Test", notch_width: int = 30, notch_height: int = 20,
+    def __init__(self, notch_text: str = "notch", notch_width: int = 30, notch_height: int = 20,
                  notch_offset: int = 30, radius: int = 10, border_width: int = 2,
                  offset_y: int = 12, parent=None):
         super().__init__(parent)
@@ -32,9 +32,22 @@ class NotchedLineEdit(QWidget):
 
         # allow focus to pass to child
         self.setFocusProxy(self.line)
+        self._notch_w = self._compute_notch_w()
+
+    def _compute_notch_w(self) -> float:
+        # compute from text metrics
+        fm = QFontMetrics(self.line.font())
+        text = self._notch_text or ""
+        # base text width
+        text_w = fm.horizontalAdvance(text)
+        # padding inside notch (left+right)
+        padding = 12
+        desired = text_w + padding
+        return desired
 
     def setNotchText(self, text: str):
         self._notch_text = text
+        self._notch_w = self._compute_notch_w()
         self.update()
 
     def setOffsetY(self, oy: int):
@@ -46,6 +59,7 @@ class NotchedLineEdit(QWidget):
     def resizeEvent(self, event):
         super().resizeEvent(event)
         self._reposition_child()
+        self._notch_w = self._compute_notch_w()
 
     def _reposition_child(self):
         # place the QLineEdit child at y = offset_y, full width minus margins
@@ -128,12 +142,6 @@ class NotchedLineEdit(QWidget):
             bg_top = max(0.0, desired_bg_top)
             bg_rect = QRectF(bg_x, bg_top, bg_w, notch_h)
 
-            # draw background (use widget background color)
-            # bg_color = self.palette().color(self.backgroundRole())
-            # painter.setPen(Qt.NoPen)
-            # painter.setBrush(bg_color)
-            # painter.drawRoundedRect(bg_rect, 4, 4)
-
             # draw text centered in bg_rect
             painter.setPen(QPen(QColor("#111111")))
             text_x = bg_x + (bg_w - text_w) / 2.0
@@ -145,6 +153,10 @@ class NotchedLineEdit(QWidget):
     def setPlaceholderText(self, text: str):
         self.line.setPlaceholderText(text)
 
+    def setLabel(self, text: str):
+        self._notch_text = text
+        self._notch_w = self._compute_notch_w()
+
 class TextFieldController(WidgetController):
 
     def __init__(self):
@@ -154,3 +166,6 @@ class TextFieldController(WidgetController):
 
     def set_placeholder(self, text: str):
         self.widget.setPlaceholderText(text)
+
+    def set_label(self, text: str):
+        self.widget.setLabel(text)
