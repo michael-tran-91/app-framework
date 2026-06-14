@@ -23,6 +23,47 @@ class WidgetController(Controller):
             super().__init__(None)
             self._controller = controller
 
+        def _resize_edges(self, pos):
+            x = pos.x()
+            y = pos.y()
+
+            w = self._controller.widget.width()
+            h = self._controller.widget.height()
+
+            m = 8
+
+            left = x <= m
+            right = x >= w - m
+
+            top = y <= m
+            bottom = y >= h - m
+
+            if top and left:
+                return Qt.TopEdge | Qt.LeftEdge
+
+            if top and right:
+                return Qt.TopEdge | Qt.RightEdge
+
+            if bottom and left:
+                return Qt.BottomEdge | Qt.LeftEdge
+
+            if bottom and right:
+                return Qt.BottomEdge | Qt.RightEdge
+
+            if left:
+                return Qt.LeftEdge
+
+            if right:
+                return Qt.RightEdge
+
+            if top:
+                return Qt.TopEdge
+
+            if bottom:
+                return Qt.BottomEdge
+
+            return None
+
         def eventFilter(self, obj, event):
             if event.type() == QEvent.MouseButtonPress:
                 if event.button() == Qt.LeftButton:
@@ -31,11 +72,24 @@ class WidgetController(Controller):
                         "global_position": event.globalPosition().toPoint()
                     }))
                     return True
+            elif event.type() == QEvent.MouseButtonRelease:
+                if event.button() == Qt.LeftButton:
+                    self._controller.bubble_event(Event(event_type="mouse_event", data={
+                        "type" : "release",
+                        "global_position": event.globalPosition().toPoint()
+                    }))
+                    return True
             elif event.type() == QEvent.MouseMove:
                 if event.buttons() & Qt.LeftButton:
                     self._controller.bubble_event(Event(event_type="mouse_event", data={
                         "type" : "move",
                         "global_position": event.globalPosition().toPoint()
+                    }))
+                else:
+                    self._controller.bubble_event(Event(event_type="mouse_event", data={
+                        "type" : "hover",
+                        "global_position": event.globalPosition().toPoint(),
+                        "resize_edges" : self._resize_edges(event.position().toPoint())
                     }))
                     return True
 
@@ -48,10 +102,12 @@ class WidgetController(Controller):
                 if self._mouse_event_filter is None:
                     self._mouse_event_filter = WidgetController.MouseEventFilter(self)
                     self.widget.installEventFilter(self._mouse_event_filter)
+                    self.widget.setMouseTracking(True)
             else:
                 if self._mouse_event_filter is not None:
                     self.widget.removeEventFilter(self._mouse_event_filter)
                     self._mouse_event_filter = None
+                    self.widget.setMouseTracking(False)
         if "role" in event.data:
             self.widget.setProperty("role", event.data["role"])
         if "width" in event.data:

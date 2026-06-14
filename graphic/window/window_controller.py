@@ -13,9 +13,14 @@ class WindowController(VerticalController):
         self.widget.setWindowFlags(
             Qt.Window | Qt.FramelessWindowHint
         )
+        self._resize_edges = None
 
     def _on_attached(self):
         super()._on_attached()
+
+        self.dispatch_event(Event(event_type="set", data={
+            "notify_mouse_events" : True
+        }))
 
         self._title_bar = self.add_child(HorizontalController())
         self._title_bar.dispatch_event(Event(event_type="set", data={
@@ -64,8 +69,61 @@ class WindowController(VerticalController):
             self._title_bar
         ])
 
+        self.register_event_handler("mouse_event", self.handle_resize)
+
     def handle_title_bar_movement(self, event: Event):
-        self.widget.window().windowHandle().startSystemMove()
+        if event.data["type"] == "press":
+            self.widget.window().windowHandle().startSystemMove()
+
+    def handle_resize(self, event: Event):
+        if event.data["type"] == "hover":
+            self._resize_edges = event.data["resize_edges"]
+            self._update_cursor(self._resize_edges)
+        elif event.data["type"] == "press":
+            if self._resize_edges is not None:
+                self.widget.window().windowHandle().startSystemResize(
+                    self._resize_edges
+                )
+        elif event.data["type"] == "release":
+            self._resize_edges = None
+            self._update_cursor(self._resize_edges)
 
     def handle_exit_button_clicked(self, event: Event):
         QApplication.instance().quit()
+
+    def _update_cursor(self, edges):
+
+        if edges in (
+            Qt.TopEdge | Qt.LeftEdge,
+            Qt.BottomEdge | Qt.RightEdge,
+        ):
+            self.widget.setCursor(
+                Qt.SizeFDiagCursor
+            )
+
+        elif edges in (
+            Qt.TopEdge | Qt.RightEdge,
+            Qt.BottomEdge | Qt.LeftEdge,
+        ):
+            self.widget.setCursor(
+                Qt.SizeBDiagCursor
+            )
+
+        elif edges in (
+            Qt.LeftEdge,
+            Qt.RightEdge,
+        ):
+            self.widget.setCursor(
+                Qt.SizeHorCursor
+            )
+
+        elif edges in (
+            Qt.TopEdge,
+            Qt.BottomEdge,
+        ):
+            self.widget.setCursor(
+                Qt.SizeVerCursor
+            )
+
+        else:
+            self.widget.unsetCursor()
