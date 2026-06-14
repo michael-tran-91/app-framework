@@ -25,6 +25,12 @@ QLineEdit[role="default"] {
 	padding-right: 6px;
 }
 
+NotchedLineEdit[role="default"] {
+	qproperty-baseColor: #8d8d8d;
+	qproperty-focusColor: #1976d2;
+	qproperty-invalidColor: #d32f2f;
+}
+
 AnimatedToggle[role="default"] {
 	qproperty-onColor: #4caf50;
 	qproperty-offColor: #d0d0d0;

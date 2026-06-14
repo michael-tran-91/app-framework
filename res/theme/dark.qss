@@ -17,12 +17,18 @@ QLabel {
 
 QLineEdit[role="default"] {
 	background: transparent;
-	color: #000000;
+	color: #ffffff;
 	min-height:20px;
 	max-height:20px;
 	border: none;
 	padding-left: 6px;
 	padding-right: 6px;
+}
+
+NotchedLineEdit[role="default"] {
+	qproperty-baseColor: #cfcfcf;
+	qproperty-focusColor: #19d2b3;
+	qproperty-invalidColor: #d32f2f;
 }
 
 AnimatedToggle[role="default"] {

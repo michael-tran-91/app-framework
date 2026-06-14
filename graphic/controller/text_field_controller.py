@@ -3,12 +3,25 @@ from PySide6.QtWidgets import QLineEdit, QSizePolicy
 
 import sys
 from html import unescape
-from PySide6.QtWidgets import QApplication, QLineEdit, QWidget, QVBoxLayout, QLabel, QSizePolicy
+from PySide6.QtWidgets import QLineEdit, QWidget, QSizePolicy
 from PySide6.QtCore import Qt, QRectF, QPointF
-from PySide6.QtGui import QPainter, QColor, QPen, QFontMetrics, QPainterPath
+from PySide6.QtGui import QPainter, QPalette, QColor, QPen, QFontMetrics, QPainterPath
+from PySide6.QtCore import Signal, Property
+
+class FocusLineEdit(QLineEdit):
+    focused_in = Signal()
+    focused_out = Signal()
+
+    def focusInEvent(self, event):
+        super().focusInEvent(event)
+        self.focused_in.emit()
+
+    def focusOutEvent(self, event):
+        super().focusOutEvent(event)
+        self.focused_out.emit()
 
 class NotchedLineEdit(QWidget):
-    def __init__(self, notch_text: str = "notch", notch_width: int = 30, notch_height: int = 20,
+    def __init__(self, notch_text: str = " ", notch_width: int = 30, notch_height: int = 20,
                  notch_offset: int = 30, radius: int = 10, border_width: int = 2,
                  offset_y: int = 12, parent=None):
         super().__init__(parent)
@@ -19,9 +32,14 @@ class NotchedLineEdit(QWidget):
         self._radius = radius
         self._border_w = border_width
         self._offset_y = max(0, int(offset_y))
+        self._base_color = QColor("#cfcfcf")
+        self._focus_color = QColor("#1976d2")
+        self._invalid_color = QColor("#d32f2f")
 
         # child QLineEdit that will be visually shifted down by offset_y
-        self.line = QLineEdit(self)
+        self.line = FocusLineEdit(self)
+        self.line.focused_in.connect(self._on_focused_in)
+        self.line.focused_out.connect(self._on_focused_out)
         self.line.setProperty("role", "default")
         self.line.setPlaceholderText("No current tab")
         self.line.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
@@ -33,6 +51,12 @@ class NotchedLineEdit(QWidget):
         # allow focus to pass to child
         self.setFocusProxy(self.line)
         self._notch_w = self._compute_notch_w()
+
+    def _on_focused_in(self):
+        self.update()
+
+    def _on_focused_out(self):
+        self.update()
 
     def _compute_notch_w(self) -> float:
         # compute from text metrics
@@ -75,7 +99,7 @@ class NotchedLineEdit(QWidget):
 
         w = self.width()
         h = self.height()
-        pen_w = max(1, self._border_w) * 0.75
+        pen_w = max(1, self._border_w) * 0.5
         inset = pen_w / 2.0
 
         left = inset + 8   # align with child left_margin
@@ -117,10 +141,7 @@ class NotchedLineEdit(QWidget):
         # choose color based on state (invalid property on child or focus)
         invalid = bool(self.line.property("invalid"))
         focused = self.line.hasFocus()
-        base_color = QColor("#cfcfcf")
-        focus_color = QColor("#1976d2")
-        invalid_color = QColor("#d32f2f")
-        border_color = invalid_color if invalid else (focus_color if focused else base_color)
+        border_color = self._invalid_color if invalid else (self._focus_color if focused else self._base_color)
 
         pen = QPen(border_color, pen_w)
         painter.setPen(pen)
@@ -143,12 +164,52 @@ class NotchedLineEdit(QWidget):
             bg_rect = QRectF(bg_x, bg_top, bg_w, notch_h)
 
             # draw text centered in bg_rect
-            painter.setPen(QPen(QColor("#111111")))
+            # painter.setPen(QPen(self.line.palette().color(QPalette.Text)))
+            painter.setPen(QPen(border_color))
             text_x = bg_x + (bg_w - text_w) / 2.0
             text_y = bg_top + (bg_rect.height() + fm.ascent() - fm.descent()) / 2.0
             painter.drawText(QPointF(text_x, text_y), text)
 
         painter.end()
+
+    def getBaseColor(self):
+        return self._base_color
+
+    def setBaseColor(self, c):
+        # accept QColor or color string
+        if isinstance(c, QColor):
+            self._base_color = c
+        else:
+            self._base_color = QColor(str(c))
+        self.update()
+
+    baseColor = Property(QColor, getBaseColor, setBaseColor)
+
+    def getFocusColor(self):
+        return self._focus_color
+
+    def setFocusColor(self, c):
+        # accept QColor or color string
+        if isinstance(c, QColor):
+            self._focus_color = c
+        else:
+            self._focus_color = QColor(str(c))
+        self.update()
+
+    focusColor = Property(QColor, getFocusColor, setFocusColor)
+
+    def getInvalidColor(self):
+        return self._invalid_color
+
+    def setInvalidColor(self, c):
+        # accept QColor or color string
+        if isinstance(c, QColor):
+            self._invalid_color = c
+        else:
+            self._invalid_color = QColor(str(c))
+        self.update()
+
+    invalidColor = Property(QColor, getInvalidColor, setInvalidColor)
 
     def setPlaceholderText(self, text: str):
         self.line.setPlaceholderText(text)
