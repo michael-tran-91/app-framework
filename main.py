@@ -65,10 +65,10 @@ class AppWidget(WidgetController):
 			"side" : ShadowEdgeController.TOP | ShadowEdgeController.RIGHT | ShadowEdgeController.BOTTOM | ShadowEdgeController.LEFT
 		}))
 		a = shadow.add_child(WidgetController(layout=QVBoxLayout()))
-		a.widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
 		a.dispatch_event(Event(event_type="set", data={
 			"role" : "test_widget2",
-			"spacing" : 10
+			"spacing" : 10,
+			"size_policy" : ["expanding", "maximum"]
 		}))
 		btn = a.add_child(ButtonController())
 		btn.dispatch_event(Event(event_type="set", data={

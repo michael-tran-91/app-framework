@@ -39,6 +39,25 @@ class WidgetController(Controller):
         if "spacing" in event.data:
             if self.layout:
                 self.layout.setSpacing(event.data["spacing"])
+        if "size_policy" in event.data:
+            width_policy = QSizePolicy.Policy.Expanding
+            height_policy = QSizePolicy.Policy.Expanding
+            data_policy = event.data["size_policy"]
+            if data_policy[0] == "fixed":
+                width_policy = QSizePolicy.Policy.Fixed
+            elif data_policy[0] == "maximum":
+                width_policy = QSizePolicy.Policy.Maximum
+            elif data_policy[0] == "minimum":
+                width_policy = QSizePolicy.Policy.Minimum
+
+            if data_policy[1] == "fixed":
+                height_policy = QSizePolicy.Policy.Fixed
+            elif data_policy[1] == "maximum":
+                height_policy = QSizePolicy.Policy.Maximum
+            elif data_policy[1] == "minimum":
+                height_policy = QSizePolicy.Policy.Minimum
+
+            self.widget.setSizePolicy(width_policy, height_policy)
 
 #---------------------------------------------------------------------------
 # property
