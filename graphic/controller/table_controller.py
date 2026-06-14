@@ -14,9 +14,12 @@ class TableController(WidgetController):
         self.widget.setShowGrid(False)
         self.widget.horizontalHeader().setFixedHeight(30)
         self.widget.setSelectionBehavior(QTableWidget.SelectRows)
-        self.widget.verticalHeader().setVisible(False)
+        self.widget.setSelectionMode(QTableWidget.SingleSelection)
+        self.widget.verticalHeader().hide()
+        self.widget.verticalHeader().setHighlightSections(False)
         self.widget.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
         self.widget.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
+
         scrollbar = AnimatedScrollBar(Qt.Vertical, self.widget)
         self.widget.setVerticalScrollBar(scrollbar)
         scrollbar.attachTo(self.widget)
@@ -24,6 +27,13 @@ class TableController(WidgetController):
         scrollbar = AnimatedScrollBar(Qt.Horizontal, self.widget)
         self.widget.setHorizontalScrollBar(scrollbar)
         scrollbar.attachTo(self.widget)
+
+        self.widget.itemSelectionChanged.connect(self._on_row_selected)
+
+    def _on_row_selected(self):
+        selected_rows = self.widget.selectionModel().selectedRows()
+        for index in selected_rows:
+            print(f"Row {index.row()} selected")
 
     def handle_set(self, event: Event):
         super().handle_set(event)
@@ -51,14 +61,14 @@ class TableController(WidgetController):
                 new_row_index = self.widget.rowCount()
                 self.widget.insertRow(new_row_index)
                 t = QTableWidgetItem("David")
-                t.setFlags(t.flags() & ~Qt.ItemIsSelectable & ~Qt.ItemIsEditable) 
+                t.setFlags(t.flags() & ~Qt.ItemIsEditable) 
                 t.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                 self.widget.setItem(new_row_index, 0, t)
                 t = QTableWidgetItem("28")
-                t.setFlags(t.flags() & ~Qt.ItemIsSelectable & ~Qt.ItemIsEditable) 
+                t.setFlags(t.flags() & ~Qt.ItemIsEditable) 
                 t.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                 self.widget.setItem(new_row_index, 1, t)
                 t = QTableWidgetItem("Paris")
-                t.setFlags(t.flags() & ~Qt.ItemIsSelectable & ~Qt.ItemIsEditable) 
+                t.setFlags(t.flags() & ~Qt.ItemIsEditable) 
                 t.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                 self.widget.setItem(new_row_index, 2, t)

@@ -27,6 +27,16 @@ QTableWidget[role="default"]::item {
 	padding-left: 6px;
 	padding-right: 6px;
 	color: #000000;
+	outline: none;
+}
+
+QTableWidget[role="default"]::item:selected {
+	background-color: #e0e0e0;
+	border-bottom: 1px solid #e0e0e0;
+	padding-left: 6px;
+	padding-right: 6px;
+	color: #000000;
+	outline: none;
 }
 
 QHeaderView::section[role="default"] {
@@ -35,11 +45,13 @@ QHeaderView::section[role="default"] {
     font-weight: medium;
     padding: 6px;
     border: none;
+	outline: none;
 }
 
 QHeaderView::section[role="default"]:hover {
 	border: none;
     border-bottom: 1px solid #a0a0a0;
+	outline: none;
 }
 
 QLineEdit[role="default"] {

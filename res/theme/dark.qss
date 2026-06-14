@@ -29,6 +29,15 @@ QTableWidget[role="default"]::item {
 	color: #ffffff;
 }
 
+QTableWidget[role="default"]::item:selected {
+	background-color: #24292e;
+	border-bottom: 1px solid #282828;
+	padding-left: 6px;
+	padding-right: 6px;
+	color: #ffffff;
+	outline: none;
+}
+
 QHeaderView::section[role="default"] {
     background-color: #21272d;
     color: #ffffff;
