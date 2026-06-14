@@ -1,4 +1,4 @@
-from .widget_controller import WidgetController
+from .widget_controller import WidgetController, Event
 from PySide6.QtWidgets import QPushButton
 from PySide6.QtWidgets import QSizePolicy, QVBoxLayout, QPushButton, QGraphicsDropShadowEffect
 from PySide6.QtCore import Qt
@@ -19,3 +19,12 @@ class ButtonController(WidgetController):
         shadow.setColor(QColor(0, 0, 0, 120))
 
         button.setGraphicsEffect(shadow)
+        button.clicked.connect(self._on_click)
+
+    def _on_click(self):
+        self.bubble_event(Event(event_type="button_controller_clicked", data={}))
+
+    def handle_set(self, event: Event):
+        super().handle_set(event)
+        if "text" in event.data:
+            self.widget.setText(event.data["text"])

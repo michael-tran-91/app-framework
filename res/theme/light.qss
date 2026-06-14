@@ -8,6 +8,44 @@ QWidget[role="test_widget2"] {
 	border: none;
 }
 
+[role="title_bar"] {
+	background-color: #d5d5d5;
+}
+
+QPushButton[role="minimize_button"] {
+    background: transparent;
+    color: #000000;
+    font-size: 14px;
+    padding: 6px 12px;
+    border: none;
+}
+
+QPushButton[role="minimize_button"]:hover {
+    background-color: #959595;
+}
+
+QPushButton[role="minimize_button"]:pressed {
+    background-color: #808080;
+}
+
+QPushButton[role="exit_button"] {
+    background: transparent;
+    color: #000000;
+    font-size: 14px;
+    padding: 6px 12px;
+    border: none;
+}
+
+QPushButton[role="exit_button"]:hover {
+    background-color: #e32e2e;
+	color: white;
+}
+
+QPushButton[role="exit_button"]:pressed {
+    background-color: #a72323;
+	color: white;
+}
+
 [role="main_background"] {
 	background-color: #f3f4f6;
 }

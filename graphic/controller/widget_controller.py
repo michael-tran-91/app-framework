@@ -1,5 +1,6 @@
 from core.controller.controller import Controller, Event
 from PySide6.QtWidgets import QLayout, QSizePolicy, QWidget, QLabel
+from PySide6.QtCore import Qt, QObject, QEvent
 
 class WidgetController(Controller):
     def __init__(self, layout: QLayout | None = None, widget: QWidget | None = None):
@@ -11,12 +12,46 @@ class WidgetController(Controller):
             layout.setContentsMargins(0, 0, 0, 0)
             layout.setSpacing(0)
         self._widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self._mouse_event_filter = None
 
     def _on_attached(self):
         super()._on_attached()
         self.register_event_handler("set", self.handle_set)
 
+    class MouseEventFilter(QObject):
+        def __init__(self, controller):
+            super().__init__(None)
+            self._controller = controller
+
+        def eventFilter(self, obj, event):
+            if event.type() == QEvent.MouseButtonPress:
+                if event.button() == Qt.LeftButton:
+                    self._controller.bubble_event(Event(event_type="mouse_event", data={
+                        "type" : "press",
+                        "global_position": event.globalPosition().toPoint()
+                    }))
+                    return True
+            elif event.type() == QEvent.MouseMove:
+                if event.buttons() & Qt.LeftButton:
+                    self._controller.bubble_event(Event(event_type="mouse_event", data={
+                        "type" : "move",
+                        "global_position": event.globalPosition().toPoint()
+                    }))
+                    return True
+
+            return False
+
     def handle_set(self, event: Event):
+        if "notify_mouse_events" in event.data:
+            enable = event.data["notify_mouse_events"]
+            if enable:
+                if self._mouse_event_filter is None:
+                    self._mouse_event_filter = WidgetController.MouseEventFilter(self)
+                    self.widget.installEventFilter(self._mouse_event_filter)
+            else:
+                if self._mouse_event_filter is not None:
+                    self.widget.removeEventFilter(self._mouse_event_filter)
+                    self._mouse_event_filter = None
         if "role" in event.data:
             self.widget.setProperty("role", event.data["role"])
         if "width" in event.data:

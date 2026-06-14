@@ -15,17 +15,18 @@ from graphic.controller.text_field_controller import TextFieldController
 from graphic.controller.table_controller import TableController
 from graphic.controller.vertical_controller import VerticalController
 from graphic.controller.horizontal_controller import HorizontalController
+from graphic.window.window_controller import WindowController
 from PySide6.QtCore import Qt
 from util.file_manager import fetch as fetch_file_content
 
 light_styleSheet = fetch_file_content(path="app://res/theme/light.qss", encoding="utf8")
 dark_styleSheet = fetch_file_content(path="app://res/theme/dark.qss", encoding="utf8")
 
-class AppWidget(VerticalController):
+class AppWidget(WindowController):
 
 	def __init__(self, app:QApplication):
 		super().__init__()
-		self._app = app
+		self._app = app		
 
 	def handle_light_dark(self, event: Event):
 		if event.data["checked"]:
@@ -35,7 +36,7 @@ class AppWidget(VerticalController):
 
 	def _on_attached(self):
 		super()._on_attached()
-		stack = self.add_child(StackedController())
+		stack = self._main_content.add_child(StackedController())
 		stack.dispatch_event(Event(event_type="set", data={
 			"role" : "main_background"
 		}))

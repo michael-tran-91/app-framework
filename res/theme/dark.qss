@@ -8,6 +8,10 @@ QWidget[role="test_widget2"] {
 	border: none;
 }
 
+[role="title_bar"] {
+	background-color: #1b1d20;
+}
+
 [role="main_background"] {
 	background-color: #111214;
 }
