@@ -43,7 +43,6 @@ class NotchedLineEdit(QWidget):
         self.line.setProperty("role", "default")
         self.line.setPlaceholderText("No current tab")
         self.line.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        self.line.setStyleSheet("QLineEdit { padding: 6px 10px; background: transparent; }")
 
         # layout is optional; we'll position child manually in resizeEvent
         self.setMinimumHeight(self.line.sizeHint().height() + self._offset_y + int(self._notch_h/2) + 6)
