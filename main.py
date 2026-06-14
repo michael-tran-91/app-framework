@@ -29,7 +29,6 @@ class AppWidget(WidgetController):
 			self._app.setStyleSheet(light_styleSheet)
 		else:
 			self._app.setStyleSheet(dark_styleSheet)
-		self.lb.widget.setText(self.lb.widget.text() + " append")
 
 	def _on_attached(self):
 		super()._on_attached()
@@ -56,6 +55,9 @@ class AppWidget(WidgetController):
 		self.light_dark_toggle = btn
 		a = shadow.add_child(WidgetController(layout=QHBoxLayout()))
 		self.lb = a.add_child(LabelController("Test Label"))
+		self.lb.dispatch_event(Event(event_type="set", data={
+			"text" : "Hello world"
+		}), reuse_context=True)
 		a.add_child(LabelController("Test Label"))
 		vb = a.add_child(WidgetController(layout=QVBoxLayout()))
 		tf = vb.add_child(NotchedTextFieldController())

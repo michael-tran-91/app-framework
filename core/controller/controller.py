@@ -1,10 +1,12 @@
 import threading, copy
+from contextlib import contextmanager
 
 thread_event = threading.local()
 thread_event.context = {
     "controllers" : set()
 }
 
+@contextmanager
 def acquire_context(ctx):
     old_ctx = thread_event.context
     thread_event.context = ctx
@@ -89,6 +91,7 @@ class Controller():
 #---------------------------------------------------------------------------
 # public method | context manager
 #---------------------------------------------------------------------------
+    @contextmanager
     def union_context(self, extra = None):
         new_ctx = copy.deepcopy(thread_event.context)
         new_ctx["controller"] = new_ctx.get("controller", set())
@@ -101,6 +104,7 @@ class Controller():
         yield
         thread_event.context = old_ctx
 
+    @contextmanager
     def new_context(self, extra = None):
         old_ctx = thread_event.context
         thread_event.context = {
