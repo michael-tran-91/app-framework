@@ -13,16 +13,18 @@ from graphic.controller.label_controller import LabelController
 from graphic.controller.notched_text_field_controller import NotchedTextFieldController
 from graphic.controller.text_field_controller import TextFieldController
 from graphic.controller.table_controller import TableController
+from graphic.controller.vertical_controller import VerticalController
+from graphic.controller.horizontal_controller import HorizontalController
 from PySide6.QtCore import Qt
 from util.file_manager import fetch as fetch_file_content
 
 light_styleSheet = fetch_file_content(path="app://res/theme/light.qss", encoding="utf8")
 dark_styleSheet = fetch_file_content(path="app://res/theme/dark.qss", encoding="utf8")
 
-class AppWidget(WidgetController):
+class AppWidget(VerticalController):
 
 	def __init__(self, app:QApplication):
-		super().__init__(layout=QVBoxLayout())
+		super().__init__()
 		self._app = app
 
 	def handle_light_dark(self, event: Event):
@@ -39,12 +41,12 @@ class AppWidget(WidgetController):
 		}))
 		splitter = stack.add_child(SplitterController(orientation=Qt.Horizontal))
 
-		widget = splitter.add_child(WidgetController(layout=QVBoxLayout()))
-		shadow = widget.add_child(ShadowEdgeController(layout=QVBoxLayout()))
+		widget = splitter.add_child(VerticalController())
+		shadow = widget.add_child(ShadowEdgeController(direction=ShadowEdgeController.VERTICAL))
 		shadow.dispatch_event(Event(event_type="set", data={
 			"side" : ShadowEdgeController.TOP | ShadowEdgeController.BOTTOM | ShadowEdgeController.LEFT
 		}))
-		a = shadow.add_child(WidgetController(layout=QVBoxLayout()))
+		a = shadow.add_child(VerticalController())
 		a.dispatch_event(Event(event_type="set", data={
 			"role" : "test_widget"
 		}))
@@ -55,8 +57,8 @@ class AppWidget(WidgetController):
 			"columns_width" : [100, -1, -1]
 		}))
 
-		widget = splitter.add_child(WidgetController(layout=QVBoxLayout()))
-		shadow = widget.add_child(ShadowEdgeController(layout=QVBoxLayout()))
+		widget = splitter.add_child(VerticalController())
+		shadow = widget.add_child(ShadowEdgeController(direction=ShadowEdgeController.VERTICAL))
 		shadow.dispatch_event(Event(event_type="set", data={
 			"content_margins" : [6, 6, 0, 0]
 		}))
@@ -64,7 +66,7 @@ class AppWidget(WidgetController):
 		shadow.dispatch_event(Event(event_type="set", data={
 			"side" : ShadowEdgeController.TOP | ShadowEdgeController.RIGHT | ShadowEdgeController.BOTTOM | ShadowEdgeController.LEFT
 		}))
-		a = shadow.add_child(WidgetController(layout=QVBoxLayout()))
+		a = shadow.add_child(VerticalController())
 		a.dispatch_event(Event(event_type="set", data={
 			"role" : "test_widget2",
 			"spacing" : 10,
@@ -84,13 +86,13 @@ class AppWidget(WidgetController):
 		}))
 		self.light_dark_toggle = btn
 
-		a = shadow.add_child(WidgetController(layout=QHBoxLayout()))
+		a = shadow.add_child(HorizontalController())
 		self.lb = a.add_child(LabelController("Test Label"))
 		self.lb.dispatch_event(Event(event_type="set", data={
 			"text" : "Hello world"
 		}), reuse_context=True)
 		a.add_child(LabelController("Test Label"))
-		vb = a.add_child(WidgetController(layout=QVBoxLayout()))
+		vb = a.add_child(VerticalController())
 		vb.dispatch_event(Event(event_type="set", data={
 			"spacing" : 10
 		}))

@@ -6,17 +6,23 @@ from PySide6.QtCore import Qt
 
 class ShadowEdgeController(WidgetController):
 
+    VERTICAL = 0
+    HORIZONTAL = 1
+
     TOP     = 0b0001
     RIGHT   = 0b0010
     BOTTOM  = 0b0100
     LEFT    = 0b1000
 
-    def __init__(self, layout: QLayout | None = None):
+    def __init__(self, direction:int = VERTICAL):
         self._stack_layout = QStackedLayout()
         self._stack_layout.setStackingMode(QStackedLayout.StackAll)
         super().__init__(layout=self._stack_layout, widget=QFrame())
 
-        self._content_layout = layout
+        if direction == self.VERTICAL:
+            self._content_layout = QVBoxLayout()
+        else:
+            self._content_layout = QHBoxLayout()
         self._content_widget = QWidget()
         self._content_widget.setLayout(self._content_layout)
         self._content_layout.setContentsMargins(0, 0, 0, 0)
