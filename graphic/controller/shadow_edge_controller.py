@@ -1,4 +1,5 @@
 from .widget_controller import WidgetController
+from core.controller.controller import Event
 from PySide6.QtWidgets import QLayout, QSizePolicy, QStackedLayout, QFrame, QVBoxLayout, QHBoxLayout, QWidget
 from enum import Enum
 from PySide6.QtCore import Qt
@@ -36,13 +37,15 @@ class ShadowEdgeController(WidgetController):
 #---------------------------------------------------------------------------
 # public method | enable edge shadows
 #---------------------------------------------------------------------------
-    def enable_edge(self, direction):
-        for dir in [self.TOP, self.RIGHT, self.BOTTOM, self.LEFT]:
-            if direction & dir:
-                if dir not in self._edges:
-                    self._enable_edge(dir)
-                else:
-                    self._edges[dir].show()
+    def handle_set(self, event: Event):
+        super().handle_set(event)
+        if "side" in event.data:
+            for dir in [self.TOP, self.RIGHT, self.BOTTOM, self.LEFT]:
+                if event.data["side"] & dir:
+                    if dir not in self._edges:
+                        self._enable_edge(dir)
+                    else:
+                        self._edges[dir].show()
 
     def _enable_edge(self, direction):
 

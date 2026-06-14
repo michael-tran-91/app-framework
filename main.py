@@ -40,7 +40,9 @@ class AppWidget(WidgetController):
 
 		widget = splitter.add_child(WidgetController(layout=QVBoxLayout()))
 		shadow = widget.add_child(ShadowEdgeController(layout=QVBoxLayout()))
-		shadow.enable_edge(ShadowEdgeController.TOP | ShadowEdgeController.BOTTOM | ShadowEdgeController.LEFT)
+		shadow.dispatch_event(Event(event_type="set", data={
+			"side" : ShadowEdgeController.TOP | ShadowEdgeController.BOTTOM | ShadowEdgeController.LEFT
+		}))
 		a = shadow.add_child(WidgetController(layout=QVBoxLayout()))
 		a.dispatch_event(Event(event_type="set", data={
 			"role" : "test_widget"
@@ -48,7 +50,9 @@ class AppWidget(WidgetController):
 
 		widget = splitter.add_child(WidgetController(layout=QVBoxLayout()))
 		shadow = widget.add_child(ShadowEdgeController(layout=QVBoxLayout()))
-		shadow.enable_edge(ShadowEdgeController.TOP | ShadowEdgeController.RIGHT | ShadowEdgeController.BOTTOM | ShadowEdgeController.LEFT)
+		shadow.dispatch_event(Event(event_type="set", data={
+			"side" : ShadowEdgeController.TOP | ShadowEdgeController.RIGHT | ShadowEdgeController.BOTTOM | ShadowEdgeController.LEFT
+		}))
 		a = shadow.add_child(WidgetController(layout=QVBoxLayout()))
 		a.dispatch_event(Event(event_type="set", data={
 			"role" : "test_widget2"
