@@ -8,8 +8,11 @@ class TextFieldController(WidgetController):
         self.widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.widget.setProperty("role", "default")
 
-    def set_placeholder(self, text: str):
-        self.widget.setPlaceholderText(text)
+    def _on_attached(self):
+        super()._on_attached()
+        self.register_event_handler("set", self.handle_set)
 
-    def set_label(self, text: str):
-        pass
+    def handle_set(self, event):
+        data = event.get("data", {})
+        if "placeholder" in data:
+            self.widget.setPlaceholderText(data["placeholder"])

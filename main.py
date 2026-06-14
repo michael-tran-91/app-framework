@@ -59,17 +59,37 @@ class AppWidget(WidgetController):
 		a.add_child(LabelController("Test Label"))
 		vb = a.add_child(WidgetController(layout=QVBoxLayout()))
 		tf = vb.add_child(NotchedTextFieldController())
-		tf.set_placeholder("input domain or ip")
-		tf.set_label("host")
+		tf.dispatch_event({
+			"type" : "set",
+			"data" : {
+				"placeholder" : "input domain or ip",
+				"label" : "host"
+			}
+		})
 		tf = vb.add_child(NotchedTextFieldController())
-		tf.set_placeholder("input ssh port")
-		tf.set_label("port")
+		tf.dispatch_event({
+			"type" : "set",
+			"data" : {
+				"placeholder" : "input ssh port",
+				"label" : "port"
+			}
+		})
 		tf = vb.add_child(NotchedTextFieldController())
-		tf.set_placeholder("input user")
-		tf.set_label("user")
+		tf.dispatch_event({
+			"type" : "set",
+			"data" : {
+				"placeholder" : "input user",
+				"label" : "user"
+			}
+		})
 		tf = vb.add_child(TextFieldController())
-		tf.set_placeholder("input password")
-		tf.set_label("password")
+		tf.dispatch_event({
+			"type" : "set",
+			"data" : {
+				"placeholder" : "input password",
+				"label" : "password"
+			}
+		})
 
 		self.register_event_handler("toggle_controller_clicked", self.handle_light_dark, required_controllers=[
 			self.light_dark_toggle
