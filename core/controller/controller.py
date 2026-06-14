@@ -25,6 +25,12 @@ class Controller():
         while ctrl.parent:
             ctrl = ctrl.parent
         return ctrl
+    
+#---------------------------------------------------------------------------
+# private method | tree structure
+#---------------------------------------------------------------------------
+    def _on_attached(self):
+        pass
 
 #---------------------------------------------------------------------------
 # public method | tree structure
@@ -32,6 +38,7 @@ class Controller():
     def add_child(self, child : Controller):
         self.childrens.append(child)
         child.parent = self
+        child._on_attached()
         return child
 
     def remove_child(self, child : Controller):
@@ -77,10 +84,29 @@ class Controller():
 #---------------------------------------------------------------------------
 # public method | event handlers
 #---------------------------------------------------------------------------
-    def register_event_handler(self, event_type, handler : callable):
+    def register_event_handler(self, event_type, handler : callable, required_controllers = None):
         if event_type not in self.event_handlers:
             self.event_handlers[event_type] = []
-        self.event_handlers[event_type].append(handler)
+
+        rqids = set()
+        if required_controllers is not None:
+            for _i in required_controllers:
+                if isinstance(_i, Controller):
+                    rqids.add(id(_i))
+                elif isinstance(_i, int):
+                    rqids.add(_i)
+
+        self.event_handlers[event_type].append((handler, rqids))
+
+        controllers = set()
+        ctrl = self
+        while ctrl:
+            controllers.add(id(ctrl))
+            ctrl = ctrl.parent
+
+        root = self.root
+        if hasattr(root, "_register_event_path"):
+            root._register_event_path(event_type, controllers)
 
 #---------------------------------------------------------------------------
 # public method | event dispatch
@@ -101,32 +127,42 @@ class Controller():
         if hasattr(root, "enqueue_event"):
             root.enqueue_event(event, self)
 
-    def dispatch_event(self, event):
+    def dispatch_event(self, event, reuse_context = False):
+        self._prepare_event_context(event, reuse_context)
+        self._dispatch_event(event, None)
+
+#---------------------------------------------------------------------------
+# private method | event dispatch
+#---------------------------------------------------------------------------
+    def _dispatch_event(self, event, controllers):
         if self._handle_event(event):
             return True
         
         for child in self.childrens:
-            if child.dispatch_event(event):
+            if controllers is not None and id(child) not in controllers:
+                continue
+
+            if child._dispatch_event(event, controllers):
                 return True
 
         return False
-#---------------------------------------------------------------------------
-# private method | event dispatch
-#---------------------------------------------------------------------------
+
     def _handle_event(self, event):
-        if not self.in_event_context(event):
+        if not self._in_event_context(event):
             return False
-        
+        ctrl_ids = event.get("context", {}).get("controller", set())
+
         handlers = self.event_handlers.get(event["type"], [])
-        for handler in handlers:
-            if handler(event):
-                return True
+        for handler, required_ids in handlers:
+            if ctrl_ids.issuperset(required_ids):
+                if handler(event):
+                    return True
         return False
     
 #---------------------------------------------------------------------------
 # private method | paticipate int event context
 #---------------------------------------------------------------------------
-    def in_event_context(self, event):
+    def _in_event_context(self, event):
         ctrl_ids = event.get("context", {}).get("controller", set())
         return id(self) in ctrl_ids
     
