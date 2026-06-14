@@ -9,6 +9,7 @@ from graphic.controller.splitter_controller import SplitterController
 from graphic.controller.button_controller import ButtonController
 from graphic.controller.toggle_controller import ToggleController
 from graphic.controller.label_controller import LabelController
+from graphic.controller.text_field_controller import TextFieldController
 from PySide6.QtCore import Qt
 from util.file_manager import fetch as fetch_file_content
 
@@ -61,13 +62,15 @@ def main():
 	a = shadow.add_child(WidgetController(layout=QHBoxLayout()))
 	lb = a.add_child(LabelController("Test Label"))
 	a.add_child(LabelController("Test Label"))
-	a.add_child(LabelController("Test Label"))
-	a.add_child(LabelController("Test Label"))
-	a.add_child(LabelController("Test Label"))
-	a.add_child(LabelController("Test Label"))
-	a.add_child(LabelController("Test Label"))
-	a.add_child(LabelController("Test Label"))
-	a.add_child(LabelController("Test Label"))
+	vb = a.add_child(WidgetController(layout=QVBoxLayout()))
+	tf = vb.add_child(TextFieldController())
+	tf.set_placeholder("input host...")
+	tf = vb.add_child(TextFieldController())
+	tf.set_placeholder("input port...")
+	tf = vb.add_child(TextFieldController())
+	tf.set_placeholder("input user...")
+	tf = vb.add_child(TextFieldController())
+	tf.set_placeholder("input password...")
 
 	stack.widget.resize(400, 300)
 	stack.widget.show()
