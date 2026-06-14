@@ -1,4 +1,4 @@
-from core.controller.controller import Controller
+from core.controller.controller import Controller, Event
 from PySide6.QtWidgets import QLayout, QSizePolicy, QWidget, QLabel
 
 class WidgetController(Controller):
@@ -14,6 +14,11 @@ class WidgetController(Controller):
 
     def _on_attached(self):
         super()._on_attached()
+        self.register_event_handler("set", self.handle_set)
+
+    def handle_set(self, event: Event):
+        if "role" in event.data:
+            self.widget.setProperty("role", event.data["role"])
 
 #---------------------------------------------------------------------------
 # property

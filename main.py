@@ -40,17 +40,23 @@ class AppWidget(WidgetController):
 		shadow = widget.add_child(ShadowEdgeController(layout=QVBoxLayout()))
 		shadow.enable_edge(ShadowEdgeController.TOP | ShadowEdgeController.BOTTOM | ShadowEdgeController.LEFT)
 		a = shadow.add_child(WidgetController(layout=QVBoxLayout()))
-		a.widget.setProperty("role","test_widget")
+		a.dispatch_event(Event(event_type="set", data={
+			"role" : "test_widget"
+		}))
 
 		widget = splitter.add_child(WidgetController(layout=QVBoxLayout()))
 		shadow = widget.add_child(ShadowEdgeController(layout=QVBoxLayout()))
 		shadow.enable_edge(ShadowEdgeController.TOP | ShadowEdgeController.RIGHT | ShadowEdgeController.BOTTOM | ShadowEdgeController.LEFT)
 		a = shadow.add_child(WidgetController(layout=QVBoxLayout()))
-		a.widget.setProperty("role","test_widget2")
+		a.dispatch_event(Event(event_type="set", data={
+			"role" : "test_widget2"
+		}))
 		btn = a.add_child(ButtonController())
 		btn.widget.setFixedSize(200, 40)
 		btn = a.add_child(ToggleController(True))
-		btn.widget.setProperty("role","toggle_theme")
+		btn.dispatch_event(Event(event_type="set", data={
+			"role" : "toggle_theme"
+		}))
 		btn.widget.setFixedSize(60, 30)
 		self.light_dark_toggle = btn
 		a = shadow.add_child(WidgetController(layout=QHBoxLayout()))

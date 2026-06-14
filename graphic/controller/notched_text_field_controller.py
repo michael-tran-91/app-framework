@@ -219,11 +219,9 @@ class NotchedTextFieldController(WidgetController):
         self.widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         self.widget.setProperty("role", "default")
 
-    def _on_attached(self):
-        super()._on_attached()
-        self.register_event_handler("set", self.handle_set)
-
     def handle_set(self, event: Event):
+        super().handle_set(event)
+        
         if "placeholder" in event.data:
             self.widget.setPlaceholderText(event.data["placeholder"])
         if "label" in event.data:
