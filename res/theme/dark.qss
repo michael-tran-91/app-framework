@@ -12,6 +12,40 @@ QWidget[role="test_widget2"] {
 	background-color: #1b1d20;
 }
 
+QPushButton[role="minimize_button"] {
+    background: transparent;
+    color: #ffffff;
+    font-size: 14px;
+    padding: 6px 12px;
+    border: none;
+}
+
+QPushButton[role="minimize_button"]:hover {
+    background-color: #2b2b2b;
+}
+
+QPushButton[role="minimize_button"]:pressed {
+    background-color: #151515;
+}
+
+QPushButton[role="exit_button"] {
+    background: transparent;
+    color: #ffffff;
+    font-size: 14px;
+    padding: 6px 12px;
+    border: none;
+}
+
+QPushButton[role="exit_button"]:hover {
+    background-color: #e32e2e;
+	color: white;
+}
+
+QPushButton[role="exit_button"]:pressed {
+    background-color: #a72323;
+	color: white;
+}
+
 [role="main_background"] {
 	background-color: #111214;
 }

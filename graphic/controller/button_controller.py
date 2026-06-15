@@ -13,12 +13,6 @@ class ButtonController(WidgetController):
         self.widget.setCursor(Qt.PointingHandCursor)
 
         button = self.widget
-        shadow = QGraphicsDropShadowEffect(button)
-        shadow.setBlurRadius(4)
-        shadow.setOffset(0, 0)  # shadow all around
-        shadow.setColor(QColor(0, 0, 0, 120))
-
-        button.setGraphicsEffect(shadow)
         button.clicked.connect(self._on_click)
 
     def _on_click(self):
@@ -28,3 +22,12 @@ class ButtonController(WidgetController):
         super().handle_set(event)
         if "text" in event.data:
             self.widget.setText(event.data["text"])
+        if "shadow" in event.data:
+            if event.data["shadow"] == True:
+                button = self.widget
+                shadow = QGraphicsDropShadowEffect(button)
+                shadow.setBlurRadius(4)
+                shadow.setOffset(0, 0)  # shadow all around
+                shadow.setColor(QColor(0, 0, 0, 120))
+
+                button.setGraphicsEffect(shadow)

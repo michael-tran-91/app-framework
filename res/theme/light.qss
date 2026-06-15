@@ -21,11 +21,13 @@ QPushButton[role="minimize_button"] {
 }
 
 QPushButton[role="minimize_button"]:hover {
-    background-color: #959595;
+    background-color: #a7a7a7;
+	color: #eaeaea;
 }
 
 QPushButton[role="minimize_button"]:pressed {
-    background-color: #808080;
+    background-color: #868686;
+	color: #ffffff;
 }
 
 QPushButton[role="exit_button"] {

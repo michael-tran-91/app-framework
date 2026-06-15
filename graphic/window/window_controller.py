@@ -61,6 +61,14 @@ class WindowController(VerticalController):
             "side" : ShadowEdgeController.TOP
         }))
 
+        self.register_event_handler("button_controller_clicked", self.handle_minimize_button_clicked, required_controllers=[
+            self._minimize_button
+        ])
+
+        self.register_event_handler("button_controller_clicked", self.handle_maximize_button_clicked, required_controllers=[
+            self._maximize_button
+        ])
+
         self.register_event_handler("button_controller_clicked", self.handle_exit_button_clicked, required_controllers=[
             self._exit_button
         ])
@@ -87,6 +95,15 @@ class WindowController(VerticalController):
         elif event.data["type"] == "release":
             self._resize_edges = None
             self._update_cursor(self._resize_edges)
+
+    def handle_minimize_button_clicked(self, event: Event):
+        self.widget.window().showMinimized()
+
+    def handle_maximize_button_clicked(self, event: Event):
+        if self.widget.window().isMaximized():
+            self.widget.window().showNormal()
+        else:
+            self.widget.window().showMaximized()
 
     def handle_exit_button_clicked(self, event: Event):
         QApplication.instance().quit()
